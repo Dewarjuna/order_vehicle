@@ -16,14 +16,7 @@
     <!-- NProgress -->
     <link href="<?php echo base_url('assets/vendors/nprogress/nprogress.css'); ?>" rel="stylesheet">
     <!-- iCheck -->
-    <link href="<?php echo base_url('assets/vendors/iCheck/skins/flat/green.css'); ?>" rel="stylesheet">
-	
-    <!-- bootstrap-progressbar -->
-    <link href="<?php echo base_url('assets/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css'); ?>" rel="stylesheet">
-    <!-- JQVMap -->
-    <link href="<?php echo base_url('assets/vendors/jqvmap/dist/jqvmap.min.css'); ?>" rel="stylesheet"/>
-    <!-- bootstrap-daterangepicker -->
-    <link href="<?php echo base_url('assets/vendors/bootstrap-daterangepicker/daterangepicker.css'); ?>" rel="stylesheet">
+   <link href="<?php echo base_url('assets/vendors/iCheck/skins/flat/green.css'); ?>" rel="stylesheet">
 
     <!-- Custom Theme Style -->
     <link href="<?php echo base_url('assets/build/css/custom.min.css'); ?>" rel="stylesheet">
@@ -43,19 +36,18 @@
             <!-- menu profile quick info -->
             <div class="profile clearfix">
               <div class="profile_pic">
-                <img src="<?php echo base_url("assets/production/images/img.jpg") ?>" alt="..." class="img-circle profile_img">
+                <img src="<?php echo base_url('assets/production/images/img.jpg'); ?>" alt="..." class="img-circle profile_img">
               </div>
               <div class="profile_info">
                 <span>Welcome,</span>
-                <h2><?php echo isset($nama) ? $nama : 'Guest'; ?></h2>
-                <small>Role: <?php echo isset($role) ? $role : '-'; ?></small>
+                <h2>John Doe</h2>
               </div>
-              <div class="clearfix"></div>
             </div>
             <!-- /menu profile quick info -->
 
             <br />
 
+            <!-- sidebar menu -->
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
               <div class="menu_section">
@@ -63,14 +55,11 @@
                 <ul class="nav side-menu">
                   <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="<?php echo base_url('index.php/welcome/index'); ?>">Dashboard</a></li>
-                      <li><a href="<?php echo base_url('index.php/order/submit'); ?>">Pesan Kendaraan</a></li>
-                      <li><a href="index3.html">Detail Pesanan</a></li>
+                      <li><a href="index.html">Dashboard</a></li>
+                      <li><a href="index2.html">Dashboard2</a></li>
+                      <li><a href="index3.html">Dashboard3</a></li>
                     </ul>
                   </li>
-                </ul>
-              </div>                 
-                  <li><a href="javascript:void(0)"><i class="fa fa-laptop"></i> Landing Page <span class="label label-success pull-right">Coming Soon</span></a></li>
                 </ul>
               </div>
             </div>
@@ -87,7 +76,7 @@
               <a data-toggle="tooltip" data-placement="top" title="Lock">
                 <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
               </a>
-              <a data-toggle="tooltip" data-placement="top" title="Logout" href="<?php echo site_url('auth/logout'); ?>">
+              <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
               </a>
             </div>
@@ -106,7 +95,7 @@
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <img src="<?php echo base_url("assets/production/images/img.jpg") ?>" alt=""><?php echo isset($nama) ? $nama : 'Guest'; ?>
+                    <img src="<?php echo base_url('assets/production/images/img.jpg'); ?>" alt="">John Doe
                     <span class=" fa fa-angle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -130,7 +119,7 @@
                   <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
                     <li>
                       <a>
-                        <span class="image"><img src="<?php echo base_url("assets/production/images/img.jpg") ?>" alt="Profile Image" /></span>
+                        <span class="image"><img src="<?php echo base_url('assets/production/images/img.jpg'); ?>" alt="Profile Image" /></span>
                         <span>
                           <span>John Smith</span>
                           <span class="time">3 mins ago</span>
@@ -142,7 +131,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="<?php echo base_url("assets/production/images/img.jpg") ?>" alt="Profile Image" /></span>
+                        <span class="image"><img src="<?php echo base_url('assets/production/images/img.jpg'); ?>" alt="Profile Image" /></span>
                         <span>
                           <span>John Smith</span>
                           <span class="time">3 mins ago</span>
@@ -154,7 +143,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="<?php echo base_url("assets/production/images/img.jpg") ?>" alt="Profile Image" /></span>
+                        <span class="image"><img src="<?php echo base_url('assets/production/images/img.jpg'); ?>" alt="Profile Image" /></span>
                         <span>
                           <span>John Smith</span>
                           <span class="time">3 mins ago</span>
@@ -166,7 +155,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="<?php echo base_url("assets/production/images/img.jpg") ?>" alt="Profile Image" /></span>
+                        <span class="image"><img src="<?php echo base_url('assets/production/images/img.jpg'); ?>" alt="Profile Image" /></span>
                         <span>
                           <span>John Smith</span>
                           <span class="time">3 mins ago</span>
@@ -195,11 +184,10 @@
         <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
-            <div class="page-title">
+            <div class="page-title"> 
               <div class="title_left">
-                <h3>Plain Page</h3>
+                <h3>Tables <small>Some examples to get you started</small></h3>
               </div>
-
               <div class="title_right">
                 <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
                   <div class="input-group">
@@ -211,33 +199,15 @@
                 </div>
               </div>
             </div>
-
-            <div class="clearfix"></div>
-
-            <div class="row">
-              <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel">
-                  <div class="x_title">
-                    <h2>Plain Page</h2>
-                    <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                      </li>
-                      <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                        <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Settings 1</a>
-                          </li>
-                          <li><a href="#">Settings 2</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li><a class="close-link"><i class="fa fa-close"></i></a>
-                      </li>
-                    </ul>
                     <div class="clearfix"></div>
-                  </div>
-                  <div class="x_content">
-                      Add content to the page ...
+                    <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-success" role="alert" style="font-size:18px; margin-top:20px;">
+                <strong>Pesanan kendaraan anda telah berhasil disimpan.</strong><br>
+                Silahkan lihat status pesanan anda <a href="link_ke_status_pesanan_anda">disini</a>.
+                </div>
+            </div>
+            </div>		
                   </div>
                 </div>
               </div>
@@ -265,38 +235,10 @@
     <script src="<?php echo base_url('assets/vendors/fastclick/lib/fastclick.js'); ?>"></script>
     <!-- NProgress -->
     <script src="<?php echo base_url('assets/vendors/nprogress/nprogress.js'); ?>"></script>
-    <!-- Chart.js -->
-    <script src="<?php echo base_url('assets/vendors/Chart.js/dist/Chart.min.js'); ?>"></script>
-    <!-- gauge.js -->
-    <script src="<?php echo base_url('assets/vendors/gauge.js/dist/gauge.min.js'); ?>"></script>
-    <!-- bootstrap-progressbar -->
-    <script src="<?php echo base_url('assets/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js'); ?>"></script>
     <!-- iCheck -->
     <script src="<?php echo base_url('assets/vendors/iCheck/icheck.min.js'); ?>"></script>
-    <!-- Skycons -->
-    <script src="<?php echo base_url('assets/vendors/skycons/skycons.js'); ?>"></script>
-    <!-- Flot -->
-    <script src="<?php echo base_url('assets/vendors/Flot/jquery.flot.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/vendors/Flot/jquery.flot.pie.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/vendors/Flot/jquery.flot.time.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/vendors/Flot/jquery.flot.stack.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/vendors/Flot/jquery.flot.resize.js'); ?>"></script>
-    <!-- Flot plugins -->
-    <script src="<?php echo base_url('assets/vendors/flot.orderbars/js/jquery.flot.orderBars.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/vendors/flot-spline/js/jquery.flot.spline.min.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/vendors/flot.curvedlines/curvedLines.js'); ?>"></script>
-    <!-- DateJS -->
-    <script src="<?php echo base_url('assets/vendors/DateJS/build/date.js'); ?>"></script>
-    <!-- JQVMap -->
-    <script src="<?php echo base_url('assets/vendors/jqvmap/dist/jquery.vmap.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/vendors/jqvmap/dist/maps/jquery.vmap.world.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js'); ?>"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="<?php echo base_url('assets/vendors/moment/min/moment.min.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/vendors/bootstrap-daterangepicker/daterangepicker.js'); ?>"></script>
 
     <!-- Custom Theme Scripts -->
     <script src="<?php echo base_url('assets/build/js/custom.min.js'); ?>"></script>
-	
   </body>
 </html>
