@@ -72,4 +72,28 @@ class Auth_model extends CI_Model
 
 		return $this->db->update($this->_table, $data, ['id' => $id]);
 	}
+
+	public function getusers_all()
+{
+    return $this->db->get('users')->result();
+}
+
+	public function getuser_by_id($id)
+	{
+		return $this->db->get_where($this->_table, ['id' => $id])->row();
+	}
+
+	public function update_user($id, $data)
+	{
+		return $this->db->update($this->_table, $data, ['id' => $id]);
+	}
+
+	public function delete_user($id)
+	{
+		return $this->db->delete($this->_table, ['id' => $id]);
+	}
+	public function add_user($data)
+	{
+		return $this->db->insert($this->_table, $data);
+	}
 }

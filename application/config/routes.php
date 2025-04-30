@@ -51,5 +51,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $route['default_controller'] = 'welcome';
 $route['order/submit'] = 'order/submit';
+$route['order/detail'] = 'order/detail';
+$route['order/detail/(:num)'] = 'order/detail/$1';
+$route['order/update/(:num)'] = 'order/update/$1';
+$route['order/edit/(:num)'] = 'order/edit/$1';
+$route['order/pending_orders'] = 'order/pending_orders';
+$route['order/approve/(:num)'] = 'order/approve/$1';
+$route['order/do_approve/(:num)'] = 'order/do_approve/$1';
+$route['order/order_report'] = 'order/order_report';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

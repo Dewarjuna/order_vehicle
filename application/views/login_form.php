@@ -32,6 +32,11 @@
           <section class="login_content">
           <form action="<?php echo site_url('auth/login'); ?>" method="post">
             <h1>Login Form</h1>
+                      <?php if ($this->session->flashdata('session_expired')): ?>
+              <div class="alert alert-warning">
+                  <?php echo $this->session->flashdata('session_expired'); ?>
+              </div>
+          <?php endif; ?>
             <?php if(validation_errors()): ?>
             <div class="alert alert-danger">
                 <?php echo validation_errors(); ?>
@@ -60,7 +65,7 @@
                 <br />
 
                 <div>
-                  <h1><i class="fa fa-paw"></i> Gentelella Alela!</h1>
+                  <h1><i class="fa fa-car"></i> Login Pemesanan Kendaraan</h1>
                   <p>©2016 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p>
                 </div>
               </div>
@@ -96,7 +101,7 @@
                 <br />
 
                 <div>
-                  <h1><i class="fa fa-paw"></i> Gentelella Alela!</h1>
+                  <h1><i class="fa fa-paw"></i> Login Pemesanan Kendaraan</h1>
                   <p>©2016 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p>
                 </div>
               </div>

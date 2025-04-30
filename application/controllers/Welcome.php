@@ -7,7 +7,6 @@ class Welcome extends MY_Controller {
     {
         parent::__construct();
         $this->load->model('auth_model');
-        $this->load->library('session');
     }
 
     public function index()
@@ -23,9 +22,37 @@ class Welcome extends MY_Controller {
         $this->load->view('home', $data);
     }
 
-    public function test_session()
-{
-    $this->session->set_userdata('test', 'hello');
-    echo 'Session value: ' . $this->session->userdata('test');
-}
+    public function user_list()
+    {
+        // Check admin
+        if ($this->user_session['role'] !== 'admin') {
+            show_error('Access denied.');
+            return;
+        }
+
+        $data['users'] = $this->auth_model->getusers_all();
+        $this->load->view('admin/user_list', $data);
+    }
+    public function user_detail($id)
+    {
+        // Check admin
+        if ($this->user_session['role'] !== 'admin') {
+            show_error('Access denied.');
+            return;
+        }
+
+        $data['user'] = $this->auth_model->getusers_by_id($id);
+        $this->load->view('admin/user_detail', $data);
+    }
+    public function user_edit($id)
+    {
+        // Check admin
+        if ($this->user_session['role'] !== 'admin') {
+            show_error('Access denied.');
+            return;
+        }
+
+        $data['user'] = $this->auth_model->getusers_by_id($id);
+        $this->load->view('admin/user_edit', $data);
+    }
 }

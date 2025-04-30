@@ -17,9 +17,11 @@ class MY_Controller extends CI_Controller
         );
         $this->load->vars('user_session', $this->user_session);
 
-        // Redirect to login if user is not logged in, except on the Auth controller
+        // Redirect to login if session expired
         $controller = $this->router->fetch_class();
         if (empty($this->user_session['user_id']) && $controller != 'auth') {
+            // Set a flashdata message for auto-logout
+            $this->session->set_flashdata('session_expired', 'Your session has expired due to inactivity. Please log in again.');
             redirect('auth');
         }
     }

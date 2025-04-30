@@ -12,6 +12,7 @@ class Order_model extends CI_Model {
     public function getpesanan_by_id($id) {
         return $this->db->get_where('pesanan', ['id' => $id])->row();
     }
+    
 
     public function getusers_all() {
         return $this->db->get('users')->result();
@@ -33,4 +34,31 @@ class Order_model extends CI_Model {
     public function insert_order($data) {
         return $this->db->insert('pesanan', $data);
     }
+
+    public function getpesanan_by_pemesan($pemesan)
+{
+    return $this->db->get_where('pesanan', ['pemesan' => $pemesan])->result();
+}
+
+public function delete($id)
+{
+    return $this->db->delete('pesanan', array('id' => $id));
+}
+
+public function update($id, $data)
+{
+    $data['updated_at'] = date('Y-m-d H:i:s'); // If you have this field
+    $this->db->where('id', $id);
+    return $this->db->update('pesanan', $data);
+}
+
+public function approve_order($id, $kendaraan) {
+    $data = array(
+        'status' => 'approved',
+        'kendaraan' => $kendaraan,
+        'updated_at' => date('Y-m-d H:i:s')
+    );
+    $this->db->where('id', $id);
+    return $this->db->update('pesanan', $data);
+}
 }
