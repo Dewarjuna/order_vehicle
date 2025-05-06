@@ -42,7 +42,7 @@
                       ?>
                       <div class="form-group">
                           <label class="control-label col-md-3 col-sm-3 col-xs-12">Nomor Karyawan</label>
-                          <div class="col-md-9 col-sm-9 col-xs-12">
+                          <div class="col-md-6 col-sm-9 col-xs-12">
                               <select class="select2_group form-control" id="nomor_karyawan" name="nomor_karyawan">
                                   <?php foreach ($grouped_users as $divisi => $users_in_divisi): ?>
                                       <optgroup label="<?= htmlspecialchars($divisi) ?>">
@@ -52,7 +52,7 @@
                                                   data-nama="<?= htmlspecialchars($user->nama) ?>"
                                                   data-divisi="<?= htmlspecialchars($user->divisi) ?>"
                                               >
-                                                  <?= htmlspecialchars($user->nomor_karyawan) ?>
+                                                  <?= htmlspecialchars($user->nomor_karyawan . ' - ' . $user->nama) ?>
                                               </option>
                                           <?php endforeach; ?>
                                       </optgroup>
@@ -156,8 +156,6 @@
                 minDate: today,
                 allowInputToggle: true
             });
-
-            // Optional: If you want datetime picker for tanggal_pesanan
             /*
             $('#tanggal_pesanan').datetimepicker({
                 format: 'DD-MM-YYYY',
@@ -203,14 +201,20 @@
         </script>
         <script>
         $(function() {
-            // When the select changes
+            // Initialize Select2 for enhanced dropdown with search
+            $('.select2_group').select2({
+                placeholder: "Pilih Nomor Karyawan...",
+                allowClear: true,
+            });
+
+            // When selection changes, update text fields as before
             $('.select2_group').on('change', function() {
                 var selected = $(this).find('option:selected');
                 $('#nama').val(selected.data('nama'));
                 $('#divisi').val(selected.data('divisi'));
             });
 
-            // Trigger change on page load to auto-fill if default selected
+            // Auto-fill when opening form (optional)
             $('.select2_group').trigger('change');
         });
         </script>

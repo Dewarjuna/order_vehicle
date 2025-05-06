@@ -235,40 +235,78 @@ public function pending_orders() {
 }
 
 // Show form for admin to approve an order
-public function approve($id) {
+public function approve($id)
+{
+    // Only admin can approve
     if ($this->user_session['role'] !== 'admin') {
         show_error('Access denied.');
         return;
     }
 
     $order = $this->order_model->getpesanan_by_id($id);
+
     if (!$order || $order->status !== 'pending') {
         show_error('Order not found or already approved.');
         return;
     }
 
-    // Example: predefined kendaraan list, or load from db table if you have
-    $data['kendaraan_options'] = ['Kijang Innova', 'Alphard', 'Toyota Avanza', 'Honda'];
+    // Load vehicle model if not already loaded
+    $this->load->model('vehicle_model');
+    $available_vehicles = $this->vehicle_model->get_available();
+
+    // Prepare vehicle options
+    $data['kendaraan_options'] = [];
+    foreach ($available_vehicles as $vehicle) {
+        $data['kendaraan_options'][] = [
+            'id' => $vehicle->id,
+            'label' => $vehicle->nama_kendaraan . " [{$vehicle->tnkb}]"
+        ];
+    }
     $data['order'] = $order;
 
     $this->load->view('admin/approve_form', $data);
 }
 
-// Handle form submit for approval
-public function do_approve($id) {
+public function do_approve($id)
+{
+    // Only admin can approve
     if ($this->user_session['role'] !== 'admin') {
         show_error('Access denied.');
         return;
     }
 
-    $kendaraan = $this->input->post('kendaraan');
-    if (empty($kendaraan)) {
+    $kendaraan_id = $this->input->post('kendaraan');
+
+    // Validate vehicle selection
+    if (empty($kendaraan_id)) {
         $this->session->set_flashdata('error', 'Please select a vehicle.');
         redirect('order/approve/' . $id);
         return;
     }
 
-    if ($this->order_model->approve_order($id, $kendaraan)) {
+    $this->load->model('vehicle_model');
+    $vehicle = $this->vehicle_model->get_by_id($kendaraan_id);
+
+    // Validate vehicle status
+    if (!$vehicle || $vehicle->status_kendaraan !== 'available') {
+        $this->session->set_flashdata('error', 'Selected vehicle is no longer available.');
+        redirect('order/approve/' . $id);
+        return;
+    }
+
+    // Update order status and assign vehicle
+    $order_data = [
+        'status' => 'approved',
+        'kendaraan' => $kendaraan_id,
+        'updated_at' => date('Y-m-d H:i:s')
+    ];
+    $this->db->where('id', $id);
+    $order_updated = $this->db->update('pesanan', $order_data);
+
+    // Make vehicle unavailable
+    $vehicle_updated = $this->vehicle_model->set_unavailable($kendaraan_id);
+
+    if ($order_updated && $vehicle_updated) {
         $this->session->set_flashdata('success', 'Order approved successfully.');
         redirect('order/pending_orders');
     } else {
@@ -307,6 +345,8 @@ public function order_report() {
         $this->db->where('tanggal_pakai', $date_from);
     }
     $total_rows = $this->db->count_all_results('', FALSE);
+
+    $this->db->order_by('tanggal_pakai', 'DESC');
 
     // For pagination, limit and get result
     $this->db->limit($config['per_page'], $page);

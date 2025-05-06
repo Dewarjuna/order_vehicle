@@ -61,8 +61,6 @@
     <script src="<?php echo base_url('assets/vendors/jquery.tagsinput/src/jquery.tagsinput.js'); ?>"></script>
     <!-- Switchery -->
     <script src="<?php echo base_url('assets/vendors/switchery/dist/switchery.min.js'); ?>"></script>
-    <!-- Select2 -->
-    <script src="<?php echo base_url('assets/vendors/select2/dist/js/select2.full.min.js'); ?>"></script>
     <!-- Parsley -->
     <script src="<?php echo base_url('assets/vendors/parsleyjs/dist/parsley.min.js'); ?>"></script>
     <!-- Autosize -->
@@ -73,8 +71,8 @@
     <script src="<?php echo base_url('assets/vendors/starrr/dist/starrr.js'); ?>"></script>
     <!-- Custom Theme Scripts -->
     <script src="<?php echo base_url('assets/build/js/custom.min.js'); ?>"></script>
-    <!-- bootstrap-datetimepicker -->    
-    <script src="<?php echo base_url('assets/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js'); ?>"</script>
+    <!-- Select2 -->
+    <script src="<?php echo base_url('assets/vendors/select2/dist/js/select2.full.min.js'); ?>"></script>
     <!-- Ion.RangeSlider -->
     <script src="<?php echo base_url('assets/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js'); ?>"></script>
   </body>
