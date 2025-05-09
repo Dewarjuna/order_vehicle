@@ -60,7 +60,10 @@
                 'Waktu Mulai'     => (new DateTime($pesanan->waktu_mulai))->format('H:i:s'),
                 'Waktu Selesai'   => (new DateTime($pesanan->waktu_selesai))->format('H:i:s'),
                 'Keperluan'       => nl2br(htmlspecialchars($pesanan->keperluan)),
-                'Kendaraan'       => htmlspecialchars($pesanan->kendaraan),
+                'Kendaraan' => 
+                    !empty($pesanan->no_pol) && !empty($pesanan->nama_kendaraan)
+                        ? htmlspecialchars($pesanan->no_pol) . ' (' . htmlspecialchars($pesanan->nama_kendaraan) . ')'
+                        : (!empty($pesanan->kendaraan) ? htmlspecialchars($pesanan->kendaraan) : 'Menunggu Persetujuan'),
                 'Jumlah Orang'    => (int)$pesanan->jumlah_orang,
                 'Pemesan'         => htmlspecialchars($pesanan->pemesan),
               ];

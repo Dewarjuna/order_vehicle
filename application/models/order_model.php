@@ -76,4 +76,30 @@ class Order_model extends CI_Model {
         $this->db->where('pemesan', $pemesan);
         return $this->db->count_all_results($this->table_pesanan);
     }
+
+    // Get one order by id with kendaraan details
+    public function getpesanan_with_kendaraan_by_id($id) {
+        $this->db->select('p.*, k.no_pol, k.nama_kendaraan')
+                ->from('PK_pesanan p')
+                ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
+                ->where('p.id', $id);
+        return $this->db->get()->row();
+    }
+
+    // Get all orders with kendaraan details (for list/report)
+    public function getpesanan_all_with_kendaraan() {
+        $this->db->select('p.*, k.no_pol, k.nama_kendaraan')
+                ->from('PK_pesanan p')
+                ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left');
+        return $this->db->get()->result();
+    }
+
+    // Get orders for current user (pemesan) with kendaraan details
+    public function getpesanan_by_pemesan_with_kendaraan($pemesan) {
+        $this->db->select('p.*, k.no_pol, k.nama_kendaraan')
+                ->from('PK_pesanan p')
+                ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
+                ->where('p.pemesan', $pemesan);
+        return $this->db->get()->result();
+    }
 }

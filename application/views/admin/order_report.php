@@ -55,7 +55,15 @@
                         <td><?= htmlspecialchars($row->nama); ?></td>
                         <td><?= htmlspecialchars($row->divisi); ?></td>
                         <td><?= htmlspecialchars($row->tujuan); ?></td>
-                        <td><?= htmlspecialchars($row->kendaraan); ?></td>
+                        <td>
+                            <?php if (!empty($row->no_pol) && !empty($row->nama_kendaraan)): ?>
+                              <?= htmlspecialchars($row->no_pol) ?> (<?= htmlspecialchars($row->nama_kendaraan) ?>)
+                            <?php elseif (!empty($row->kendaraan)): ?>
+                              <?= htmlspecialchars($row->kendaraan) ?>
+                            <?php else: ?>
+                              Menunggu Persetujuan
+                            <?php endif; ?>
+                        </td>
                         <td><?= htmlspecialchars($row->status); ?></td>
                         <td>
                         <a href="<?php echo site_url('order/single/'.$row->id); ?>" class="btn btn-info btn-xs last">View</a>
