@@ -91,21 +91,6 @@ class Order extends MY_Controller {
         }
     }
 
-    // controllers/Order.php
-        /* public function detail($id) // <-- add $id parameter
-        {
-            $pemesan = $this->session->userdata('nama');
-            $pesanan = $this->order_model->getpesanan_by_id($id);
-
-            // Restrict access for security: only allow original pemesan
-            if (!$pesanan || $pesanan->pemesan !== $pemesan) {
-                show_error('Anda tidak diizinkan melihat pesanan ini.');
-                return;
-            }
-
-            $data['pesanan'] = $pesanan;
-            $this->load->view('details/order_detail', $data);
-        } */
     
         public function detail()
         {
@@ -229,7 +214,7 @@ public function pending_orders() {
     // Get pending orders with kendaraan IS NULL
     $this->db->where('status', 'pending');
     $this->db->where('kendaraan IS NULL', null, false);
-    $data['pending_orders'] = $this->db->get('pesanan')->result();
+    $data['pending_orders'] = $this->db->get('PK_pesanan')->result();
 
     $this->load->view('admin/pending_list', $data);
 }
@@ -259,7 +244,7 @@ public function approve($id)
     foreach ($available_vehicles as $vehicle) {
         $data['kendaraan_options'][] = [
             'id' => $vehicle->id,
-            'label' => $vehicle->nama_kendaraan . " [{$vehicle->tnkb}]"
+            'label' => $vehicle->nama_kendaraan . " [{$vehicle->no_pol}]"
         ];
     }
     $data['order'] = $order;
@@ -288,7 +273,7 @@ public function do_approve($id)
     $vehicle = $this->vehicle_model->get_by_id($kendaraan_id);
 
     // Validate vehicle status
-    if (!$vehicle || $vehicle->status_kendaraan !== 'available') {
+    if (!$vehicle || $vehicle->status !== 'available') {
         $this->session->set_flashdata('error', 'Selected vehicle is no longer available.');
         redirect('order/approve/' . $id);
         return;
@@ -301,7 +286,7 @@ public function do_approve($id)
         'updated_at' => date('Y-m-d H:i:s')
     ];
     $this->db->where('id', $id);
-    $order_updated = $this->db->update('pesanan', $order_data);
+    $order_updated = $this->db->update('PK_pesanan', $order_data);
 
     // Make vehicle unavailable
     $vehicle_updated = $this->vehicle_model->set_unavailable($kendaraan_id);
@@ -336,7 +321,7 @@ public function order_report() {
     $page = $this->input->get('page') ? (int)$this->input->get('page') : 0;
 
     // Build query
-    $this->db->from('pesanan');
+    $this->db->from('PK_pesanan');
     $this->db->where('status', 'approved');
     if ($date_from && $date_to) {
         $this->db->where('tanggal_pakai >=', $date_from);

@@ -42,7 +42,35 @@
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
-            Add content to the page ...
+          <div class="row" style="margin-bottom:30px;">
+            <?php if ($role === 'admin'): ?>
+              <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="x_panel tile fixed_height_150">
+                  <div class="x_title"><h4>Total Pesanan (Bulan ini)</h4></div>
+                  <div class="x_content text-center"><strong style="font-size:2em;"><?= $total_orders ?></strong></div>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="x_panel tile fixed_height_150">
+                  <div class="x_title"><h4>Pesanan Belum Diseteujui (Bulan ini)</h4></div>
+                  <div class="x_content text-center"><strong style="font-size:2em;"><?= $pending_orders ?></strong></div>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="x_panel tile fixed_height_150">
+                  <div class="x_title"><h4>Pesanan Telah Disetujui (Bulan ini)</h4></div>
+                  <div class="x_content text-center"><strong style="font-size:2em;"><?= $approved_orders ?></strong></div>
+                </div>
+              </div>
+            <?php else: ?>
+              <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="x_panel tile fixed_height_150">
+                  <div class="x_title"><h4>Your Orders (This Month)</h4></div>
+                  <div class="x_content text-center"><strong style="font-size:2em;"><?= $user_orders ?></strong></div>
+                </div>
+              </div>
+            <?php endif; ?>
+            </div>
           </div>
         </div>
       </div>

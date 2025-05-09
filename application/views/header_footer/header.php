@@ -48,7 +48,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="<?php echo base_url('index.php/welcome/index'); ?>" class="site_title"><i class="fa fa-car"></i> <span>Pesan Kendaraan</span></a>
+              <a href="<?php echo base_url('index.php/home/index'); ?>" class="site_title"><i class="fa fa-car"></i> <span>Pesan Kendaraan</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -76,7 +76,7 @@
                 <ul class="nav side-menu">
                   <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
-                    <li><a href="<?php echo base_url('index.php/welcome/index'); ?>">Dashboard</a></li>
+                    <li><a href="<?php echo base_url('index.php/home/index'); ?>">Dashboard</a></li>
                     <li><a href="<?php echo base_url('index.php/order/submit'); ?>">Pesan Kendaraan</a></li>
                     <li><a href="<?php echo base_url('index.php/order/detail'); ?>">Detail Pesanan</a></li>
                     <?php if ($user_session['role'] === 'admin'): ?>
@@ -84,10 +84,16 @@
                         <a href="<?php echo base_url('index.php/order/pending_orders'); ?>">Menunggu Persetujuan</a>
                     </li>
                     <li>
-                        <a href="<?php echo base_url('/index.php/order/order_report'); ?>">Pesanan Disetujui</a>
+                        <a href="<?php echo base_url('index.php/order/order_report'); ?>">Pesanan Disetujui</a>
                     </li>
                     <li>
-                        <a href="<?php echo base_url('/index.php/welcome/user_list'); ?>">User</a>
+                        <a href="<?php echo base_url('index.php/user/user_list'); ?>">Daftar Pengguna</a>
+                    </li>
+                    <li>
+                        <a href="<?php echo base_url('index.php/driver/driver_list'); ?>">Daftar Driver</a>
+                    </li>
+                    <li>
+                        <a href="<?php echo base_url('index.php/vehicle/vehicle_list'); ?>">Daftar Kendaraan</a>
                     </li>
                     <?php endif; ?>
                   </ul>

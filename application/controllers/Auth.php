@@ -14,7 +14,7 @@ class Auth extends MY_Controller
     public function index()
     {
         if ($this->auth_model->current_user()) {
-            redirect('welcome');
+            redirect('home'); // Redirect to home if already logged in
         }
         $this->load->view("login_form");
     }
@@ -32,7 +32,7 @@ class Auth extends MY_Controller
         $password = $this->input->post("password");
     
         if ($this->auth_model->login($username, $password)) {
-            redirect('welcome'); // This line sends the browser to /welcome
+            redirect('home'); // This line sends the browser to the home page
         } else {
             $data['error'] = "Invalid username or password";
             $this->load->view('login_form', $data);

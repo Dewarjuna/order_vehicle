@@ -1,64 +1,79 @@
 <?php
 class Order_model extends CI_Model {
 
+    // Set table names as properties
+    protected $table_pesanan = 'PK_pesanan';
+    protected $table_user    = 'PK_user';
+
     public function __construct() {
         parent::__construct();
     }
 
     public function getpesanan_all() {
-        return $this->db->get('pesanan')->result();
+        return $this->db->get($this->table_pesanan)->result();
     }
 
     public function getpesanan_by_id($id) {
-        return $this->db->get_where('pesanan', ['id' => $id])->row();
+        return $this->db->get_where($this->table_pesanan, ['id' => $id])->row();
     }
-    
 
     public function getusers_all() {
-        return $this->db->get('users')->result();
+        return $this->db->get($this->table_user)->result();
     }
 
     public function getusers_by_id($id) {
-        return $this->db->get_where('users', ['id' => $id])->row();
+        return $this->db->get_where($this->table_user, ['id' => $id])->row();
     }
 
     public function create($data) {
-        // Add timestamps
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['updated_at'] = date('Y-m-d H:i:s');
-        
-        $this->db->insert('pesanan', $data);
-        return $this->db->insert_id(); // Return newly created ID
+        $this->db->insert($this->table_pesanan, $data);
+        return $this->db->insert_id();
     }
 
     public function insert_order($data) {
-        return $this->db->insert('pesanan', $data);
+        return $this->db->insert($this->table_pesanan, $data);
     }
 
-    public function getpesanan_by_pemesan($pemesan)
-{
-    return $this->db->get_where('pesanan', ['pemesan' => $pemesan])->result();
-}
+    public function getpesanan_by_pemesan($pemesan) {
+        return $this->db->get_where($this->table_pesanan, ['pemesan' => $pemesan])->result();
+    }
 
-public function delete($id)
-{
-    return $this->db->delete('pesanan', array('id' => $id));
-}
+    public function delete($id) {
+        return $this->db->delete($this->table_pesanan, array('id' => $id));
+    }
 
-public function update($id, $data)
-{
-    $data['updated_at'] = date('Y-m-d H:i:s'); // If you have this field
-    $this->db->where('id', $id);
-    return $this->db->update('pesanan', $data);
-}
+    public function update($id, $data) {
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        $this->db->where('id', $id);
+        return $this->db->update($this->table_pesanan, $data);
+    }
 
-public function approve_order($id, $kendaraan) {
-    $data = array(
-        'status' => 'approved',
-        'kendaraan' => $kendaraan,
-        'updated_at' => date('Y-m-d H:i:s')
-    );
-    $this->db->where('id', $id);
-    return $this->db->update('pesanan', $data);
-}
+    public function approve_order($id, $kendaraan) {
+        $data = array(
+            'status' => 'approved',
+            'kendaraan' => $kendaraan,
+            'updated_at' => date('Y-m-d H:i:s')
+        );
+        $this->db->where('id', $id);
+        return $this->db->update($this->table_pesanan, $data);
+    }
+
+    public function count_orders_by_month($month) {
+        $this->db->where("LEFT(tanggal_pesanan, 7) = '$month'", NULL, FALSE);
+        return $this->db->count_all_results($this->table_pesanan);
+    }
+    
+    public function count_orders_by_month_status($month, $status) {
+        $this->db->where("LEFT(tanggal_pesanan, 7) = '$month'", NULL, FALSE);
+        $this->db->where('status', $status);
+        return $this->db->count_all_results($this->table_pesanan);
+    }
+    
+    public function count_user_orders_by_month($month, $pemesan) {
+        $this->db->where("LEFT(tanggal_pesanan, 7) = '$month'", NULL, FALSE);
+        $this->db->where('pemesan', $pemesan);
+        return $this->db->count_all_results($this->table_pesanan);
+    }
 }
