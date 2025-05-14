@@ -95,8 +95,8 @@ class Order extends MY_Controller {
             echo $this->db->last_query();
             echo '<br>';
             print_r($this->db->error());
-            log_message('error', 'Failed to save order.');
-            show_error('Failed to save order. Please try again.');
+            log_message('error', 'Gagal menyimpan pesanan.');
+            show_error('Gagal menyimpan pesanan. Silakan coba lagi.');
         }
     }
 
@@ -116,7 +116,7 @@ class Order extends MY_Controller {
         if ($this->order_model->delete($id)) {
             redirect('order/detail');
         } else {
-            show_error('Failed to delete order.');
+            show_error('Gagal menghapus pesanan.');
         }
     }
 
@@ -130,7 +130,7 @@ class Order extends MY_Controller {
 
         // Prevent editing by other users
         if (!$pesanan || $pesanan->pemesan !== $this->session->userdata('nama')) {
-            show_error('You are not allowed to edit this order.');
+            show_error('Anda tidak memiliki akses untuk mengedit pesanan ini.');
             return;
         }
 
@@ -197,8 +197,8 @@ class Order extends MY_Controller {
             echo $this->db->last_query();
             echo '<br>';
             print_r($this->db->error());
-            log_message('error', 'Failed to update order.');
-            show_error('Failed to update order. Please try again.');
+            log_message('error', 'Gagal memperbarui pesanan.');
+            show_error('Gagal memperbarui pesanan. Silakan coba lagi.');
         }
     }
 
@@ -212,7 +212,7 @@ class Order extends MY_Controller {
             !$pesanan ||
             ($this->user_session['role'] !== 'admin' && $pesanan->pemesan !== $this->session->userdata('nama'))
         ) {
-            show_error('You are not allowed to view this order.');
+            show_error('Anda tidak memiliki akses untuk melihat detail pesanan ini.');
             return;
         }
         $data['pesanan'] = $pesanan;
@@ -244,7 +244,7 @@ class Order extends MY_Controller {
         }
         $order = $this->order_model->getpesanan_by_id($id);
         if (!$order || $order->status !== 'pending') {
-            show_error('Order not found or already approved.');
+            show_error('Pesanan tidak ditemukan atau sudah disetujui.');
             return;
         }
         $this->load->model('vehicle_model');
@@ -258,6 +258,20 @@ class Order extends MY_Controller {
                 'label' => $vehicle->nama_kendaraan . " [{$vehicle->no_pol}]"
             ];
         }
+
+        // Load driver model and get available drivers
+        $this->load->model('driver_model');
+        $available_drivers = $this->driver_model->get_available();
+
+        // Prepare drivers for select dropdown
+        $data['driver_options'] = [];
+        foreach ($available_drivers as $driver) {
+            $data['driver_options'][] = [
+                'id' => $driver->id,
+                'label' => $driver->nama
+            ];
+        }
+
         $data['order'] = $order;
         $this->load->view('admin/approve_form', $data);
     }
@@ -272,36 +286,17 @@ class Order extends MY_Controller {
             return;
         }
 
-        $kendaraan_id = $this->input->post('kendaraan');
-        if (empty($kendaraan_id)) {
-            $this->session->set_flashdata('error', 'Please select a vehicle.');
-            redirect('order/approve/' . $id);
-            return;
-        }
+        $kendaraan_id = (int)$this->input->post('kendaraan');
+        $driver_id = (int)$this->input->post('driver');
 
-        $this->load->model('vehicle_model');
-        $vehicle = $this->vehicle_model->get_by_id($kendaraan_id);
-        if (!$vehicle || $vehicle->status !== 'available') {
-            $this->session->set_flashdata('error', 'Selected vehicle is no longer available.');
-            redirect('order/approve/' . $id);
-            return;
-        }
+        $this->load->model('order_model');
+        $result = $this->order_model->approve_full_order($id, $kendaraan_id, $driver_id);
 
-        // Update order as approved and assign kendaraan
-        $order_data = [
-            'status' => 'approved',
-            'kendaraan' => $kendaraan_id,
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
-        $this->db->where('id', $id);
-        $order_updated = $this->db->update('PK_pesanan', $order_data);
-        $vehicle_updated = $this->vehicle_model->set_unavailable($kendaraan_id);
-
-        if ($order_updated && $vehicle_updated) {
-            $this->session->set_flashdata('success', 'Order approved successfully.');
+        if (isset($result['success'])) {
+            $this->session->set_flashdata('success', 'Pesanan berhasil disetujui.');
             redirect('order/pending_orders');
         } else {
-            $this->session->set_flashdata('error', 'Failed to approve order.');
+            $this->session->set_flashdata('error', isset($result['error']) ? $result['error'] : 'Gagal menyetujui pesanan.');
             redirect('order/approve/' . $id);
         }
     }
@@ -325,7 +320,7 @@ class Order extends MY_Controller {
         $this->db->select('p.id')
             ->from('PK_pesanan p')
             ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
-            ->where('p.status', 'approved');
+            ->where_in('p.status', ['approved', 'done']);
         if ($date_from && $date_to) {
             $this->db->where('p.tanggal_pakai >=', $date_from);
             $this->db->where('p.tanggal_pakai <=', $date_to);
@@ -347,7 +342,7 @@ class Order extends MY_Controller {
         $this->db->select('p.*, k.no_pol, k.nama_kendaraan')
             ->from('PK_pesanan p')
             ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
-            ->where('p.status', 'approved');
+            ->where_in('p.status', ['approved', 'done']);
         if ($date_from && $date_to) {
             $this->db->where('p.tanggal_pakai >=', $date_from);
             $this->db->where('p.tanggal_pakai <=', $date_to);

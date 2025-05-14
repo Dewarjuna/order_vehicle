@@ -95,8 +95,16 @@ class Auth_model extends CI_Model
         return $this->db->delete($this->_table, ['id' => $id]);
     }
 
+    // auth_model.php
+    public function get_user_by_nomor_karyawan($nomor_karyawan)
+    {
+        return $this->db->get_where('user', ['nomor_karyawan' => $nomor_karyawan])->row();
+    }
+
     public function add_user($data)
     {
-        return $this->db->insert($this->_table, $data);
+        return $this->db->insert('user', $data);
     }
+
+    
 }

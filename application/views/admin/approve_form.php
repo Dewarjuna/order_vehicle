@@ -26,10 +26,24 @@
       <label for="kendaraan" class="control-label col-md-3">Assign Vehicle</label>
       <div class="col-md-6">
       <select name="kendaraan" id="kendaraan" class="form-control" required>
-        <option value="">-- Select Vehicle --</option>
+        <option value="">-- Pilih Kendaraan --</option>
         <?php foreach ($kendaraan_options as $vehicle): ?>
           <option value="<?= htmlspecialchars($vehicle['id']) ?>">
             <?= htmlspecialchars($vehicle['label']) ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="driver" class="control-label col-md-3">Assign Driver</label>
+      <div class="col-md-6">
+      <select name="driver" id="driver" class="form-control" required>
+        <option value="">-- Pilih Driver --</option>
+        <?php foreach ($driver_options as $driver): ?>
+          <option value="<?= htmlspecialchars($driver['id']) ?>">
+            <?= htmlspecialchars($driver['label']) ?>
           </option>
         <?php endforeach; ?>
       </select>

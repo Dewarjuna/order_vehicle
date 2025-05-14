@@ -34,29 +34,27 @@ class Vehicle extends MY_Controller
      * (Vehicle selected by some other method, not visible here.)
      * Validates input, then updates the record.
      */
-    public function updateKendaraan() {
-        // Only admins may update vehicles
+    // Add $id as a parameter:
+    public function updateKendaraan($id)
+    {
         if ($this->user_session['role'] !== 'admin') {
             show_error('Access denied.');
             return;
         }
-        // Validate fields, including unique license plate number
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('no_pol', 'No Polisi', 'required|is_unique[PK_kendaraan.no_pol]');
+        $this->form_validation->set_rules('no_pol', 'No Polisi', 'required');
         $this->form_validation->set_rules('nama_kendaraan', 'Nama kendaraan', 'required');
         $this->form_validation->set_rules('kapasitas', 'Kapasitas', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            // On validation failure, simply redirect to list
             redirect('vehicle/vehicle_list');
         } else {
-            // On success, update vehicle in database
             $data = [
-                'nama_kendaraan' => $this->input->post('nama_kendaraan'), 
+                'nama_kendaraan' => $this->input->post('nama_kendaraan'),
                 'no_pol' => $this->input->post('no_pol'),
-                'kapasitas' => $this->input->post('kapasitas')
+                'kapasitas' => $this->input->post('kapasitas'),
             ];
-            $this->vehicle_model->update($data);
+            $this->vehicle_model->update($id, $data);
             redirect('vehicle/vehicle_list');
         }
     }
@@ -90,5 +88,15 @@ class Vehicle extends MY_Controller
             $this->vehicle_model->insert($data);
             redirect('vehicle/vehicle_list');
         }
+    }
+
+    public function delete($id)
+    {
+        if ($this->user_session['role'] !== 'admin') {
+            show_error('Access denied.');
+            return;
+        }
+        $this->vehicle_model->delete($id);
+        redirect('vehicle/vehicle_list');
     }
 }

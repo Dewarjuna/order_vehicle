@@ -63,7 +63,6 @@
                     <th>No</th>  
                     <th>Nomor Polisi</th>
                     <th>Nama Kendaraan</th>
-                    <th>Status</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -75,7 +74,6 @@
                         <td><?= $no++; ?></td>
                         <td><?= htmlspecialchars($vehicle->no_pol); ?></td>
                         <td><?= htmlspecialchars($vehicle->nama_kendaraan); ?></td>
-                        <td><?= htmlspecialchars($vehicle->status); ?></td>
                         <td>
                         <!-- Edit Button and Modal for this row -->
                         <button
@@ -84,6 +82,7 @@
                             data-toggle="modal"
                             data-target="#modalEditKendaraan<?= $vehicle->id ?>"
                         >Edit</button>
+                        <a href="<?= site_url('vehicle/delete/'.$vehicle->id); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus kendaraan ini?');">Hapus</a>
                         </td>
                     </tr>
 
@@ -100,18 +99,17 @@
                             </div>
                             <div class="modal-body">
                                 <div class="form-group">
-                                <label for="no_pol<?= $vehicle->id ?>">Nomor Polisi</label>
-                                <input type="text" class="form-control" name="no_pol" id="no_pol<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->no_pol); ?>" required>
+                                  <label for="no_pol<?= $vehicle->id ?>">Nomor Polisi</label>
+                                  <input type="text" class="form-control" name="no_pol" id="no_pol<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->no_pol); ?>" required>
                                 </div>
                                 <div class="form-group">
-                                <label for="nama_kendaraan<?= $vehicle->id ?>">Nama Kendaraan</label>
-                                <input type="text" class="form-control" name="nama_kendaraan" id="nama_kendaraan<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->nama_kendaraan); ?>" required>
+                                  <label for="nama_kendaraan<?= $vehicle->id ?>">Nama Kendaraan</label>
+                                  <input type="text" class="form-control" name="nama_kendaraan" id="nama_kendaraan<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->nama_kendaraan); ?>" required>
                                 </div>
                                 <div class="form-group">
-                                <label for="kapasitas">Kapasitas</label>
-                                <input type="text" class="form-control" name="kapasitas" id="kapasitas" required>
-                            </div>
-                            </div>
+                                  <label for="kapasitas<?= $vehicle->id ?>">Kapasitas</label>
+                                  <input type="text" class="form-control" name="kapasitas" id="kapasitas<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->kapasitas); ?>" required>
+                                </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                                 <button type="submit" class="btn btn-primary">Ubah</button>

@@ -19,14 +19,18 @@ class Home extends MY_Controller {
      * Shows general or user-specific order statistics.
      */
     public function index()
-    {
+    {   
+        date_default_timezone_set('Asia/Jakarta');
         // Redirect to login if not yet authenticated
         if(!$this->session->userdata('user_id')) {
             redirect('auth');
         }
 
-        // Load order model for statistics
+        // Load order model for statistics (AND release resources)
         $this->load->model('order_model');
+        // --- KEY LINE: Release old resources *before* showing the dashboard
+        $this->order_model->autoUpdateStatus_driver_kendaraan();
+
         $role = $this->session->userdata('role');
         $nama = $this->session->userdata('nama');
         $now = date('Y-m'); // Current month in YYYY-MM format

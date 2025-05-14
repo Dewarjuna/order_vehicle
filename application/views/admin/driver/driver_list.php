@@ -54,7 +54,6 @@
                   <tr class="headings">
                     <th>No</th>  
                     <th>Nama</th>
-                    <th>Status</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -65,7 +64,6 @@
                     <tr>
                         <td><?= $no++; ?></td>
                         <td><?= htmlspecialchars($driver->nama); ?></td>
-                        <td><?= htmlspecialchars($driver->status); ?></td>
                         <td>
                         <!-- Edit Button and Modal for this row -->
                         <button
@@ -74,6 +72,7 @@
                             data-toggle="modal"
                             data-target="#modalEditNama<?= $driver->id ?>"
                         >Edit</button>
+                        <a href="<?= site_url('driver/delete/'.$driver->id); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus driver ini?');">Hapus</a>
                         </td>
                     </tr>
 
@@ -90,8 +89,11 @@
                             </div>
                             <div class="modal-body">
                                 <div class="form-group">
-                                <label for="nama<?= $driver->id ?>">Nama</label>
-                                <input type="text" class="form-control" name="nama" id="nama<?= $driver->id ?>" value="<?= htmlspecialchars($driver->nama); ?>" required>
+                                  <label for="nama<?= $driver->id ?>">Nama</label>
+                                  <input type="text" class="form-control" name="nama" id="nama<?= $driver->id ?>" value="<?= htmlspecialchars($driver->nama); ?>" required>
+                                </div>
+                                <div class="form-group">
+                                  <label class="control-label">Status</label>
                                 </div>
                             </div>
                             <div class="modal-footer">

@@ -35,21 +35,19 @@ class Driver extends MY_Controller
      */
     public function updateNama($id)
     {
-        // Admins only
         if ($this->user_session['role'] !== 'admin') {
             show_error('Access denied.');
             return;
         }
-        // Validate the input for the driver's name
         $this->load->library('form_validation');
         $this->form_validation->set_rules('nama', 'Nama', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            // Validation failed, just redirect back
             redirect('driver/driver_list');
         } else {
-            // Validation successful, update driver name in database
-            $data = ['nama' => $this->input->post('nama')];
+            $data = [
+                'nama' => $this->input->post('nama'),
+            ];
             $this->driver_model->update($id, $data);
             redirect('driver/driver_list');
         }

@@ -33,6 +33,7 @@
     <link href="<?php echo base_url('assets/vendors/normalize-css/normalize.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/vendors/ion.rangeSlider/css/ion.rangeSlider.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/vendors/ion.rangeSlider/css/ion.rangeSlider.skinFlat.css'); ?>" rel="stylesheet">
+    <link href="<?php echo base_url('assets/vendors/sweetalert2/dist/sweetalert2.min.css'); ?>" rel="stylesheet">
 	
     <!-- bootstrap-progressbar -->
     <link href="<?php echo base_url('assets/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css'); ?>" rel="stylesheet">
@@ -84,7 +85,7 @@
                         <a href="<?php echo base_url('index.php/order/pending_orders'); ?>">Menunggu Persetujuan</a>
                     </li>
                     <li>
-                        <a href="<?php echo base_url('index.php/order/order_report'); ?>">Pesanan Disetujui</a>
+                        <a href="<?php echo base_url('index.php/order/order_report'); ?>">Laporan Pesanan</a>
                     </li>
                     <li>
                         <a href="<?php echo base_url('index.php/user/user_list'); ?>">Daftar Pengguna</a>

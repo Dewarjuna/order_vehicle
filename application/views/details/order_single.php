@@ -38,7 +38,7 @@
             <!-- Back button at the top -->
             <div style="margin-bottom:25px;">
               <?php if ($user_session['role'] === 'admin'): ?>
-                  <a href="<?= base_url('index.php/order/pending_orders'); ?>" class="btn btn-primary btn-sm">
+                  <a href="<?= base_url('index.php/order/order_report'); ?>" class="btn btn-primary btn-sm">
                       <i class="fa fa-arrow-left"></i> Back
                   </a>
               <?php else: ?>
@@ -64,6 +64,7 @@
                     !empty($pesanan->no_pol) && !empty($pesanan->nama_kendaraan)
                         ? htmlspecialchars($pesanan->no_pol) . ' (' . htmlspecialchars($pesanan->nama_kendaraan) . ')'
                         : (!empty($pesanan->kendaraan) ? htmlspecialchars($pesanan->kendaraan) : 'Menunggu Persetujuan'),
+                'Driver' => !empty($pesanan->nama_driver) ? htmlspecialchars($pesanan->nama_driver) : 'Menunggu Persetujuan',
                 'Jumlah Orang'    => (int)$pesanan->jumlah_orang,
                 'Pemesan'         => htmlspecialchars($pesanan->pemesan),
               ];

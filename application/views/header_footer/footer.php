@@ -75,5 +75,6 @@
     <script src="<?php echo base_url('assets/vendors/select2/dist/js/select2.full.min.js'); ?>"></script>
     <!-- Ion.RangeSlider -->
     <script src="<?php echo base_url('assets/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/vendors/sweetalert2/dist/sweetalert2.all.min.js'); ?>"></script>
   </body>
 </html>
