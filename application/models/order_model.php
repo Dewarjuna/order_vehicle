@@ -155,6 +155,17 @@ class Order_model extends CI_Model {
         $today = date('Y-m-d');
         $now = date('H:i:s');
 
+        /* echo "<pre>";
+        echo "PHP Now: $now\n";
+        echo "PHP Today: $today\n";
+        $this->db->where('status', 'approved');
+        $this->db->where('tanggal_pakai <=', $today);
+        $this->db->where('waktu_selesai <', $now);
+        $query = $this->db->get('PK_pesanan');
+        echo $this->db->last_query() . "\n";
+        print_r($query->result());
+        echo "</pre>"; */
+
         // Find all orders that are still 'approved' but their usage time is over
         $this->db->where('status', 'approved');
         $this->db->where('tanggal_pakai <=', $today);
@@ -187,5 +198,31 @@ class Order_model extends CI_Model {
                     'updated_at' => date('Y-m-d H:i:s')
                 ]);
         }
+    }
+
+    public function autoUpdateNoConfirmationStatus()
+    {
+        $today = date('Y-m-d');
+        $this->db->where('status', 'pending');
+        $this->db->where('tanggal_pakai <', $today);
+        $orders = $this->db->get('PK_pesanan')->result();
+
+        foreach ($orders as $order) {
+            $this->db->where('id', $order->id)
+                ->update('PK_pesanan', [
+                    'status' => 'no confirmation',
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+        }
+    }
+
+    public function reject_order($id)
+    {
+        $data = [
+            'status' => 'rejected',
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+        $this->db->where('id', $id);
+        return $this->db->update($this->table_pesanan, $data);
     }
 }

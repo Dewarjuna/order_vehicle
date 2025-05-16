@@ -24,7 +24,7 @@ class Home extends MY_Controller {
 
         $this->load->model('order_model');
         $this->order_model->autoUpdateStatus_driver_kendaraan(); // Release resources before showing the dashboard
-
+        $this->order_model->autoUpdateNoConfirmationStatus();
         $role = $this->session->userdata('role');
         $nama = $this->session->userdata('nama');
         $now = date('Y-m'); // "YYYY-MM" format for current month

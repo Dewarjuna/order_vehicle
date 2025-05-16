@@ -7,8 +7,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Order extends MY_Controller {
 
-    public $order_model;
-
     public function __construct() 
     {
         parent::__construct();
@@ -273,7 +271,8 @@ class Order extends MY_Controller {
         $this->db->select('p.id')
             ->from('PK_pesanan p')
             ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
-            ->where_in('p.status', ['approved', 'done']);
+            ->where_in('p.status', ['approved', 'done', 'no confirmation', 'rejected']);
+        // Filter by date if provided
         if ($date_from && $date_to) {
             $this->db->where('p.tanggal_pakai >=', $date_from);
             $this->db->where('p.tanggal_pakai <=', $date_to);
@@ -294,7 +293,7 @@ class Order extends MY_Controller {
             ->from('PK_pesanan p')
             ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
             ->join('PK_driver d', 'p.driver = d.id', 'left')
-            ->where_in('p.status', ['approved', 'done']);
+            ->where_in('p.status', ['approved', 'done', 'no confirmation', 'rejected']);
         if ($date_from && $date_to) {
             $this->db->where('p.tanggal_pakai >=', $date_from);
             $this->db->where('p.tanggal_pakai <=', $date_to);
@@ -311,5 +310,25 @@ class Order extends MY_Controller {
         $data['date_to'] = $date_to;
 
         $this->load->view('admin/order_report', $data);
+    }
+
+    public function reject($id)
+    {
+        if ($this->user_session['role'] !== 'admin') {
+            show_error('Access denied.');
+            return;
+        }
+        $order = $this->order_model->getpesanan_by_id($id);
+        if (!$order || $order->status !== 'pending') {
+            show_error('Pesanan tidak ditemukan atau tidak dapat ditolak.');
+            return;
+        }
+
+        if ($this->order_model->reject_order($id)) {
+            $this->session->set_flashdata('success', 'Pesanan berhasil ditolak.');
+        } else {
+            $this->session->set_flashdata('error', 'Gagal menolak pesanan.');
+        }
+        redirect('order/pending_orders');
     }
 }

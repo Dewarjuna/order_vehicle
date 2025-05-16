@@ -63,22 +63,31 @@
                         <td><?= htmlspecialchars($row->nama); ?></td>
                         <td><?= htmlspecialchars($row->tujuan); ?></td>
                         <td>
-                            <?php if (!empty($row->no_pol) && !empty($row->nama_kendaraan)): ?>
-                              <?= htmlspecialchars($row->no_pol) ?> (<?= htmlspecialchars($row->nama_kendaraan) ?>)
-                            <?php elseif (!empty($row->kendaraan)): ?>
-                              <?= htmlspecialchars($row->kendaraan) ?>
-                            <?php else: ?>
-                              Menunggu Persetujuan
-                            <?php endif; ?>
+                            <?php
+                              $status = strtolower($row->status);
+                              if ($status === 'rejected' || $status === 'no confirmation') {
+                                  echo '<em class="text-muted">- Tidak Berlaku -</em>';
+                              } elseif (!empty($row->no_pol) && !empty($row->nama_kendaraan)) {
+                                  echo htmlspecialchars($row->no_pol) . ' (' . htmlspecialchars($row->nama_kendaraan) . ')';
+                              } elseif (!empty($row->kendaraan)) {
+                                  echo htmlspecialchars($row->kendaraan);
+                              } else {
+                                  echo 'Menunggu Persetujuan';
+                              }
+                            ?>
                         </td>
                         <td>
-                            <?php if (!empty($row->nama_driver)): ?>
-                                <?= htmlspecialchars($row->nama_driver); ?>
-                            <?php elseif (!empty($row->driver)): ?>
-                                <?= htmlspecialchars($row->driver); ?>
-                            <?php else: ?>
-                                -
-                            <?php endif; ?>
+                            <?php
+                              if ($status === 'rejected' || $status === 'no confirmation') {
+                                  echo '<em class="text-muted">- Tidak Berlaku -</em>';
+                              } elseif (!empty($row->nama_driver)) {
+                                  echo htmlspecialchars($row->nama_driver);
+                              } elseif (!empty($row->driver)) {
+                                  echo htmlspecialchars($row->driver);
+                              } else {
+                                  echo '-';
+                              }
+                            ?>
                         </td>
                         <td>
                           <?php
@@ -91,6 +100,8 @@
                                 echo '<span class="label label-warning" style="font-size:14px;">Menunggu</span>';
                             } elseif ($status === 'rejected') {
                                 echo '<span class="label label-danger" style="font-size:14px;">Ditolak</span>';
+                            } elseif ($status === 'no confirmation') {
+                                echo '<span class="label label-default" style="font-size:14px;">Tidak Ada Konfirmasi</span>';
                             } else {
                                 echo '<span style="font-size:14px;">'.htmlspecialchars($row->status).'</span>';
                             }

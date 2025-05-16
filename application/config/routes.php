@@ -62,5 +62,6 @@ $route['order/order_report'] = 'order/order_report';
 $route['user/add_user']        = 'user/add_user';      // For the Add User modal form POST
 $route['user/delete_user/(:num)'] = 'user/delete_user/$1'; // For the Delete User modal form POST
 //$route['driver'] = 'driver/driver_list';
+$route['order/reject/(:num)'] = 'order/reject/$1';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
