@@ -30,6 +30,14 @@
               <a href="<?= site_url('order/order_report'); ?>" class="btn btn-default">Reset</a>
             </form>
 
+            <style>
+            /* Center BOTH table headers and table cells */
+            .table th, .table td {
+                text-align: center !important;
+                vertical-align: middle !important;
+            }
+            </style>
+
             <!-- Orders Table -->
             <div class="table-responsive">
               <table class="table table-striped jambo_table">
@@ -37,10 +45,10 @@
                   <tr class="headings">
                     <th class="column-title">No.</th>
                     <th class="column-title">Tanggal Pakai</th>
-                    <th class="column-title">Nama</th>
-                    <th class="column-title">Divisi</th>
+                    <th class="column-title">Pemakai</th>
                     <th class="column-title">Tujuan</th>
                     <th class="column-title">Kendaraan</th>
+                    <th class="column-title">Driver</th>
                     <th class="column-title">Status</th>
                     <th class="column-title no-link last"><span class="nobr">Aksi</span></th>
                   </tr>
@@ -53,7 +61,6 @@
                         <td><?= $no++; ?></td>
                         <td><?= date('d-m-Y', strtotime($row->tanggal_pakai)); ?></td>
                         <td><?= htmlspecialchars($row->nama); ?></td>
-                        <td><?= htmlspecialchars($row->divisi); ?></td>
                         <td><?= htmlspecialchars($row->tujuan); ?></td>
                         <td>
                             <?php if (!empty($row->no_pol) && !empty($row->nama_kendaraan)): ?>
@@ -64,9 +71,33 @@
                               Menunggu Persetujuan
                             <?php endif; ?>
                         </td>
-                        <td><?= htmlspecialchars($row->status); ?></td>
                         <td>
-                        <a href="<?php echo site_url('order/single/'.$row->id); ?>" class="btn btn-info btn-xs last">View</a>
+                            <?php if (!empty($row->nama_driver)): ?>
+                                <?= htmlspecialchars($row->nama_driver); ?>
+                            <?php elseif (!empty($row->driver)): ?>
+                                <?= htmlspecialchars($row->driver); ?>
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                          <?php
+                            $status = strtolower($row->status);
+                            if ($status === 'approved') {
+                                echo '<span class="label label-primary" style="font-size:14px;">Telah disetujui - Ongoing</span>';
+                            } elseif ($status === 'done') {
+                                echo '<span class="label label-success" style="font-size:14px;">Selesai</span>';
+                            } elseif ($status === 'pending') {
+                                echo '<span class="label label-warning" style="font-size:14px;">Menunggu</span>';
+                            } elseif ($status === 'rejected') {
+                                echo '<span class="label label-danger" style="font-size:14px;">Ditolak</span>';
+                            } else {
+                                echo '<span style="font-size:14px;">'.htmlspecialchars($row->status).'</span>';
+                            }
+                          ?>
+                        </td>
+                        <td>
+                        <a href="<?php echo site_url('order/single/'.$row->id); ?>" class="btn btn-info btn-xs last">Detail</a>
                         </td>
                       </tr>
                     <?php endforeach; ?>

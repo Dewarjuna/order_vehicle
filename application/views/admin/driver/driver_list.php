@@ -44,6 +44,14 @@
                     </div>
                     </div>
 
+            <style>
+            /* Center BOTH table headers and table cells */
+            .table th, .table td {
+                text-align: center;
+                vertical-align: middle;
+            }
+            </style>
+
        <div class="x_title">
             <div class="clearfix"></div>
           </div>
@@ -72,37 +80,37 @@
                             data-toggle="modal"
                             data-target="#modalEditNama<?= $driver->id ?>"
                         >Edit</button>
-                        <a href="<?= site_url('driver/delete/'.$driver->id); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus driver ini?');">Hapus</a>
                         </td>
                     </tr>
 
                     <!-- Edit Nama Modal (for this driver) -->
                     <div class="modal fade" id="modalEditNama<?= $driver->id ?>" tabindex="-1" role="dialog" aria-labelledby="modalEditNamaLabel<?= $driver->id ?>" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
+                      <div class="modal-dialog" role="document">
                         <form method="post" action="<?= site_url('driver/updateNama/'.$driver->id); ?>">
-                            <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title" id="modalEditNamaLabel<?= $driver->id ?>">Edit Nama Driver</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                              <h4 class="modal-title" id="modalEditNamaLabel<?= $driver->id ?>"><i class="fa fa-user"></i> Edit Nama Driver</h4>
+                              <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
-                                </button>
+                              </button>
                             </div>
                             <div class="modal-body">
-                                <div class="form-group">
-                                  <label for="nama<?= $driver->id ?>">Nama</label>
-                                  <input type="text" class="form-control" name="nama" id="nama<?= $driver->id ?>" value="<?= htmlspecialchars($driver->nama); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                  <label class="control-label">Status</label>
-                                </div>
+                              <div class="form-group mb-2">
+                                <label for="nama<?= $driver->id ?>"><strong>Nama</strong></label>
+                                <input type="text" class="form-control" name="nama" id="nama<?= $driver->id ?>" value="<?= htmlspecialchars($driver->nama); ?>" required>
+                              </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Ubah</button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                <i class="fa fa-times"></i> Batal
+                              </button>
+                              <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save"></i> Ubah
+                              </button>
                             </div>
-                            </div>
+                          </div>
                         </form>
-                        </div>
+                      </div>
                     </div>
                     <?php endforeach; ?>
                   <?php else: ?>

@@ -5,7 +5,7 @@
   <div class="">
     <div class="page-title">
       <div class="title_left">
-        <h3>Plain Page</h3>
+        <h3>Dashboard Pemesanan Kendaraan</h3>
       </div>
       <div class="title_right">
         <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
@@ -23,7 +23,7 @@
       <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
           <div class="x_title">
-            <h2>Plain Page</h2>
+            <h2> Berikut adalah jumlah total pesanan kendaraan bulan ini beserta statusnya</h2>
             <ul class="nav navbar-right panel_toolbox">
               <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
               </li>
@@ -44,33 +44,73 @@
           <div class="x_content">
           <div class="row" style="margin-bottom:30px;">
             <?php if ($role === 'admin'): ?>
+              <!-- Total Orders -->
               <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="x_panel tile fixed_height_150">
-                  <div class="x_title"><h4>Total Pesanan (Bulan ini)</h4></div>
-                  <div class="x_content text-center"><strong style="font-size:2em;"><?= $total_orders ?></strong></div>
+                <div class="x_panel tile fixed_height_150" style="background:#e3e6f7;">
+                  <div class="x_title text-center" style="border-bottom:none;">
+                    <i class="fa fa-list-alt fa-2x" style="color:#3a4d9c;"></i>
+                    <h4 style="color:#3a4d9c; margin-top:10px;">Total Pesanan</h4>
+                  </div>
+                  <div class="x_content text-center">
+                    <strong style="font-size:2em; color:#3a4d9c;"><?= $total_orders ?></strong>
+                    <p class="dashboard-caption">Bulan ini</p>
+                  </div>
                 </div>
               </div>
+              <!-- Pending Orders -->
               <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="x_panel tile fixed_height_150">
-                  <div class="x_title"><h4>Pesanan Belum Diseteujui (Bulan ini)</h4></div>
-                  <div class="x_content text-center"><strong style="font-size:2em;"><?= $pending_orders ?></strong></div>
+                <div class="x_panel tile fixed_height_150" style="background:#fff5e5;">
+                  <div class="x_title text-center" style="border-bottom:none;">
+                    <i class="fa fa-hourglass-start fa-2x" style="color:#f39c12;"></i>
+                    <h4 style="color:#f39c12; margin-top:10px;">Pending</h4>
+                  </div>
+                  <div class="x_content text-center">
+                    <strong style="font-size:2em; color:#f39c12;"><?= $pending_orders ?></strong>
+                    <p class="dashboard-caption" style="color:#f39c12;">Belum Disetujui</p>
+                  </div>
                 </div>
               </div>
+              <!-- Approved Orders -->
               <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="x_panel tile fixed_height_150">
-                  <div class="x_title"><h4>Pesanan Telah Disetujui (Bulan ini)</h4></div>
-                  <div class="x_content text-center"><strong style="font-size:2em;"><?= $approved_orders ?></strong></div>
+                <div class="x_panel tile fixed_height_150" style="background:#eafaf1;">
+                  <div class="x_title text-center" style="border-bottom:none;">
+                    <i class="fa fa-check-circle fa-2x" style="color:#27ae60;"></i>
+                    <h4 style="color:#27ae60; margin-top:10px;">Approved</h4>
+                  </div>
+                  <div class="x_content text-center">
+                    <strong style="font-size:2em; color:#27ae60;"><?= $approved_orders ?></strong>
+                    <p class="dashboard-caption" style="color:#27ae60;">Disetujui</p>
+                  </div>
+                </div>
+              </div>
+              <!-- Done Orders -->
+              <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="x_panel tile fixed_height_150" style="background:#f5f5f5;">
+                  <div class="x_title text-center" style="border-bottom:none;">
+                    <i class="fa fa-flag-checkered fa-2x" style="color:#555;"></i>
+                    <h4 style="color:#555; margin-top:10px;">Selesai</h4>
+                  </div>
+                  <div class="x_content text-center">
+                    <strong style="font-size:2em; color:#555;"><?= $done_orders ?></strong>
+                    <p class="dashboard-caption" style="color:#555;">Pesanan Selesai</p>
+                  </div>
                 </div>
               </div>
             <?php else: ?>
               <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="x_panel tile fixed_height_150">
-                  <div class="x_title"><h4>Your Orders (This Month)</h4></div>
-                  <div class="x_content text-center"><strong style="font-size:2em;"><?= $user_orders ?></strong></div>
+                <div class="x_panel tile fixed_height_150" style="background:#e3e6f7;">
+                  <div class="x_title text-center" style="border-bottom:none;">
+                    <i class="fa fa-list fa-2x" style="color:#3a4d9c;"></i>
+                    <h4 style="color:#3a4d9c; margin-top:10px;">Pesanan Anda</h4>
+                  </div>
+                  <div class="x_content text-center">
+                    <strong style="font-size:2em; color:#3a4d9c;"><?= $user_orders ?></strong>
+                    <p class="dashboard-caption">Bulan ini</p>
+                  </div>
                 </div>
               </div>
             <?php endif; ?>
-            </div>
+          </div>
           </div>
         </div>
       </div>

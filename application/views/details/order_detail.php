@@ -11,6 +11,15 @@
       <h2>Tabel Pesanan</h2>
       <div class="clearfix"></div>
     </div>
+
+            <style>
+            /* Center BOTH table headers and table cells */
+            .table th, .table td {
+                text-align: center !important;
+                vertical-align: middle !important;
+            }
+            </style>
+
     <div class="x_content">
       <div class="table-responsive">
         <table class="table table-striped jambo_table">
@@ -18,13 +27,11 @@
           <tr class="headings">
               <th class="column-title">No. </th>
               <th class="column-title">Tanggal Pesanan </th>
-              <th class="column-title">Nama </th>
-              <th class="column-title">Divisi </th>
+              <th class="column-title">Nama </th>             
               <th class="column-title">Tujuan </th>
               <th class="column-title">Tanggal Pakai </th>
               <th class="column-title">Waktu Pemakaian </th>
               <th class="column-title">Kendaraan </th>
-              <th class="column-title">Jumlah Orang </th>
               <th class="column-title">Status </th>
               <th class="column-title no-link last"><span class="nobr">Aksi</span></th>
             </tr>
@@ -36,7 +43,6 @@
                     <td><?php echo $no++; ?></td>
                     <td><?php echo date('d-m-Y', strtotime($row->tanggal_pesanan)); ?></td>
                     <td><?php echo htmlspecialchars($row->nama); ?></td>
-                    <td><?php echo htmlspecialchars($row->divisi); ?></td>
                     <td><?php echo htmlspecialchars($row->tujuan); ?></td>
                     <td><?php echo date('d-m-Y', strtotime($row->tanggal_pakai)); ?></td>
                     <td><?php echo substr($row->waktu_mulai, 0, 5) . ' - ' . substr($row->waktu_selesai, 0, 5); ?></td>
@@ -49,10 +55,9 @@
                         Menunggu Persetujuan
                       <?php endif; ?>
                     </td>
-                    <td><?php echo (int)$row->jumlah_orang; ?></td>
                     <td><?php echo htmlspecialchars($row->status); ?></td>
                     <td>
-                      <a href="<?php echo site_url('order/single/'.$row->id); ?>" class="btn btn-info btn-xs last">View</a>
+                      <a href="<?php echo site_url('order/single/'.$row->id); ?>" class="btn btn-info btn-xs last">Detail</a>
                       <?php if (!empty($row->kendaraan) && strtolower($row->status) === 'approved'): ?>
                         <a href="javascript:void(0);" class="btn btn-secondary btn-xs last disabled" tabindex="-1" aria-disabled="true" style="pointer-events:none;opacity:0.6;">Edit</a>
                         <a href="javascript:void(0);" class="btn btn-secondary btn-xs last disabled" tabindex="-1" aria-disabled="true" style="pointer-events:none;opacity:0.6;">Hapus</a>

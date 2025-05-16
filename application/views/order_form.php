@@ -2,6 +2,41 @@
 <!-- page content -->
 <div class="right_col" role="main">
   <div class="">
+
+    <?php if(isset($success_message) && !empty($success_message)): ?>
+        <!-- Order Success Modal -->
+        <div class="modal fade" id="successOrderModal" tabindex="-1" role="dialog" aria-labelledby="successOrderModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header" style="background: #2ecc71; color: #fff; border-bottom: none;">
+                <h4 class="modal-title" id="successOrderModalLabel">
+                  <i class="fa fa-check-circle" style="margin-right:6px;"></i> Berhasil
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Tutup" style="color:#fff; opacity:1;">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body" style="font-size:17px; padding-bottom:0;">
+                <div style="margin-bottom:.7em;">
+                  <strong><?php echo $success_message; ?></strong>
+                </div>
+                <div>
+                  <a href="<?php echo base_url('index.php/order/detail'); ?>" class="btn btn-outline-success btn-sm" style="margin-bottom:7px;">
+                    <i class="fa fa-list"></i> Daftar Pesanan
+                  </a>
+                  <a href="<?php echo site_url('order/single/'.$order_id); ?>" class="btn btn-success btn-sm" style="margin-bottom:7px;">
+                    <i class="fa fa-search"></i> Lihat Detail Pesanan
+                  </a>
+                </div>
+              </div>
+              <div class="modal-footer" style="border-top: none;">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+
     <div class="page-title">
       <div class="title_left">
         <h3>Pemesanan Kendaraan</h3>
@@ -218,3 +253,11 @@
             $('.select2_group').trigger('change');
         });
         </script>
+
+        <?php if(isset($success_message) && !empty($success_message)): ?>
+        <script>
+          $(document).ready(function(){
+            $('#successOrderModal').modal('show');
+          });
+        </script>
+        <?php endif; ?>

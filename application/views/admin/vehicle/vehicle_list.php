@@ -52,9 +52,18 @@
                     </div>
                     </div>
 
-       <div class="x_title">
+          <div class="x_title">
             <div class="clearfix"></div>
           </div>
+
+          <style>
+            /* Center BOTH table headers and table cells */
+            .table th, .table td {
+                text-align: center;
+                vertical-align: middle;
+            }
+            </style>
+
           <div class="x_content">
             <div class="table-responsive">
               <table class="table table-striped jambo_table bulk_action">
@@ -82,41 +91,45 @@
                             data-toggle="modal"
                             data-target="#modalEditKendaraan<?= $vehicle->id ?>"
                         >Edit</button>
-                        <a href="<?= site_url('vehicle/delete/'.$vehicle->id); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus kendaraan ini?');">Hapus</a>
                         </td>
                     </tr>
 
                     <!-- Edit Nama Modal (for this vehicle) -->
-                    <div class="modal fade" id="modalEditKendaraan<?= $vehicle->id ?>" tabindex="-1" role="dialog" aria-labelledby="modalEditKendaraan<?= $vehicle->id ?>" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
+                    <div class="modal fade" id="modalEditKendaraan<?= $vehicle->id ?>" tabindex="-1" role="dialog" aria-labelledby="modalEditKendaraanLabel<?= $vehicle->id ?>" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
                         <form method="post" action="<?= site_url('vehicle/updateKendaraan/'.$vehicle->id); ?>">
-                            <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title" id="modalEditKendaraan<?= $vehicle->id ?>">Edit Nama Kendaraan</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                              <h4 class="modal-title" id="modalEditKendaraanLabel<?= $vehicle->id ?>"><i class="fa fa-car"></i> Edit Kendaraan</h4>
+                              <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
-                                </button>
+                              </button>
                             </div>
                             <div class="modal-body">
-                                <div class="form-group">
-                                  <label for="no_pol<?= $vehicle->id ?>">Nomor Polisi</label>
-                                  <input type="text" class="form-control" name="no_pol" id="no_pol<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->no_pol); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                  <label for="nama_kendaraan<?= $vehicle->id ?>">Nama Kendaraan</label>
-                                  <input type="text" class="form-control" name="nama_kendaraan" id="nama_kendaraan<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->nama_kendaraan); ?>" required>
-                                </div>
-                                <div class="form-group">
-                                  <label for="kapasitas<?= $vehicle->id ?>">Kapasitas</label>
-                                  <input type="text" class="form-control" name="kapasitas" id="kapasitas<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->kapasitas); ?>" required>
-                                </div>
+                              <div class="form-group mb-2">
+                                <label for="no_pol<?= $vehicle->id ?>"><strong>Nomor Polisi</strong></label>
+                                <input type="text" class="form-control" name="no_pol" id="no_pol<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->no_pol); ?>" required>
+                              </div>
+                              <div class="form-group mb-2">
+                                <label for="nama_kendaraan<?= $vehicle->id ?>"><strong>Nama Kendaraan</strong></label>
+                                <input type="text" class="form-control" name="nama_kendaraan" id="nama_kendaraan<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->nama_kendaraan); ?>" required>
+                              </div>
+                              <div class="form-group mb-2">
+                                <label for="kapasitas<?= $vehicle->id ?>"><strong>Kapasitas</strong></label>
+                                <input type="text" class="form-control" name="kapasitas" id="kapasitas<?= $vehicle->id ?>" value="<?= htmlspecialchars($vehicle->kapasitas); ?>" required>
+                              </div>
+                            </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Ubah</button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                <i class="fa fa-times"></i> Batal
+                              </button>
+                              <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save"></i> Ubah
+                              </button>
                             </div>
-                            </div>
+                          </div>
                         </form>
-                        </div>
+                      </div>
                     </div>
                     <?php endforeach; ?>
                   <?php else: ?>

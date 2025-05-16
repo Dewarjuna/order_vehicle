@@ -9,12 +9,14 @@ class Driver_model extends CI_Model
     {
         return $this->db->get($this->table)->result();
     }
-
     public function get_by_id($id)
     {
         return $this->db->get_where($this->table, ['id' => $id])->row();
     }
 
+    /**
+     * Insert a new driver, adding timestamps.
+     */
     public function insert($data)
     {
         $data['created_at'] = date('Y-m-d H:i:s');
@@ -22,6 +24,9 @@ class Driver_model extends CI_Model
         return $this->db->insert($this->table, $data);
     }
 
+    /**
+     * Update driver details and update timestamp.
+     */
     public function update($id, $data)
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
@@ -29,11 +34,17 @@ class Driver_model extends CI_Model
         return $this->db->update($this->table, $data);
     }
 
+    /**
+     * Fetch all available drivers.
+     */
     public function get_available()
     {
         return $this->db->get_where($this->table, ['status' => 'available'])->result();
     }
 
+    /**
+     * Set driver status to unavailable.
+     */
     public function set_unavailable($id)
     {
         $data = [
@@ -44,6 +55,9 @@ class Driver_model extends CI_Model
         return $this->db->update($this->table, $data);
     }
 
+    /**
+     * Set driver status to available.
+     */
     public function set_available($id)
     {
         $data = [
