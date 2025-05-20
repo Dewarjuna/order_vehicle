@@ -146,7 +146,7 @@ class Order_model extends CI_Model {
     /**
      * Find and update orders whose scheduled usage is completed:
      * - Mark kendaraan & driver as available again
-     * - Mark pesanan as done
+     * - Mark pesanan as done makmdimcjomc
      * 
      * This should run periodically as a cron or on user interaction.
      */
@@ -200,6 +200,10 @@ class Order_model extends CI_Model {
         }
     }
 
+    /**
+     * Automatically update orders that are pending and past their usage date
+     * to 'no confirmation' status.
+     */
     public function autoUpdateNoConfirmationStatus()
     {
         $today = date('Y-m-d');
@@ -216,6 +220,9 @@ class Order_model extends CI_Model {
         }
     }
 
+    /**
+     * Reject order and mark it as 'rejected'.
+     */
     public function reject_order($id)
     {
         $data = [

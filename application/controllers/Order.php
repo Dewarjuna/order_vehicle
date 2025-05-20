@@ -2,8 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Handles CRUD, own listings, and approval of orders. 
- * Approval/report pages are restricted to admin.
+ * Order controller: handles reservation requests, edits, admin approval, and reporting.
+ * User/role checks and error handling guard sensitive operations.
  */
 class Order extends MY_Controller {
 
@@ -11,23 +11,20 @@ class Order extends MY_Controller {
     {
         parent::__construct();
         $this->load->model('order_model');
-        // Defensive: Verify model loaded; logs and errors if not.
+        // Defensive check: possible autoload/model typo or deployment error.
         if (!isset($this->order_model)) {
             log_message('error', 'Order_model not loaded.');
             show_error('Order_model failed to load. Please check the model file and loading process.');
         }
     }
 
-    /**
-     * Show form to create new order.
-     */
     public function create() {
         $users = $this->order_model->getusers_all();
         $this->load->view('order_form', ['users' => $users]);
     }
 
     /**
-     * Utility: Converts user-friendly date to storage date.
+     * Utility: Converts user-entered date to DB format.
      */
     private function convert_date($date) {
         $d = DateTime::createFromFormat('d-m-Y', $date);
@@ -35,17 +32,18 @@ class Order extends MY_Controller {
     }
 
     /**
-     * Handle submission for new reservations. Validates and inserts.
+     * Handle reservation form submission: validates and saves;
+     * redisplays form on error, or shows a success message.
      */
     public function submit() {
         $this->load->helper('form');
         $this->load->library('form_validation');
-        // Standard validation; any error reloads form.
         $this->form_validation->set_rules('tanggal_pesanan', 'Tanggal Pesanan', 'required');
-        // ... similar rules for all fields ...
+        // ... other rules for completeness ...
         $this->form_validation->set_rules('jumlah_orang', 'Jumlah Orang', 'required|integer');
 
         if ($this->form_validation->run() == FALSE) {
+            // On validation error, show form again
             echo validation_errors();
             $users = $this->order_model->getusers_all();
             $this->load->view('order_form', ['users' => $users]);
@@ -55,7 +53,7 @@ class Order extends MY_Controller {
         $tanggal_pesanan = $this->convert_date($this->input->post('tanggal_pesanan'));
         $tanggal_pakai   = $this->convert_date($this->input->post('tanggal_pakai'));
         $data = array(
-            // All sanitized inputs
+            // All relevant reservation data
             'tanggal_pesanan' => $tanggal_pesanan,
             'nomor_karyawan'  => $this->input->post('nomor_karyawan'),
             'nama'            => $this->input->post('nama'),
@@ -77,7 +75,7 @@ class Order extends MY_Controller {
             $success_message = "Pesanan kendaraan anda telah berhasil disimpan.";
             $this->load->view('order_form', ['users' => $users, 'success_message' => $success_message, 'order_id' => $order_id]);
         } else {
-            // Show detailed DB error if insert fails for troubleshooting.
+            // If DB error, help debugging: show last query and error
             echo $this->db->last_query();
             print_r($this->db->error());
             log_message('error', 'Gagal menyimpan pesanan.');
@@ -86,18 +84,16 @@ class Order extends MY_Controller {
     }
 
     /**
-     * List only the current user's orders.
+     * Display current user's reservations.
      */
-    public function detail() {
+    public function order_user() {
         $pemesan = $this->session->userdata('nama');
         $data['pesanan_list'] = $this->order_model->getpesanan_by_pemesan_with_kendaraan($pemesan);
-        $this->load->view('details/order_detail', $data);
+        $this->load->view('details/order_user', $data);
     }
 
-    /**
-     * Remove reservation, after confirming ownership.
-     */
     public function delete($id) {
+        // Only delete if record exists and is owned by user (implicit in model)
         if ($this->order_model->delete($id)) {
             redirect('order/detail');
         } else {
@@ -105,14 +101,11 @@ class Order extends MY_Controller {
         }
     }
 
-    /**
-     * Load edit page, owner-only.
-     */
     public function edit($id)
     {
         $pesanan = $this->order_model->getpesanan_by_id($id);
         $users = $this->order_model->getusers_all();
-        // Disallow for non-owners
+        // Enforce ownership: Only allow edit if user owns the order.
         if (!$pesanan || $pesanan->pemesan !== $this->session->userdata('nama')) {
             show_error('Anda tidak memiliki akses untuk mengedit pesanan ini.');
             return;
@@ -122,14 +115,11 @@ class Order extends MY_Controller {
         $this->load->view('details/order_edit', $data);
     }
 
-    /**
-     * Save edits to a reservation (validates, updates).
-     */
     public function update($id)
     {
         $this->load->helper('form');
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('tanggal_pesanan', 'Tanggal Pesanan', 'required'); // etc
+        $this->form_validation->set_rules('tanggal_pesanan', 'Tanggal Pesanan', 'required');
         $this->form_validation->set_rules('jumlah_orang', 'Jumlah Orang', 'required|integer');
 
         if ($this->form_validation->run() == FALSE) {
@@ -142,7 +132,7 @@ class Order extends MY_Controller {
         $tanggal_pesanan = $this->convert_date($this->input->post('tanggal_pesanan'));
         $tanggal_pakai   = $this->convert_date($this->input->post('tanggal_pakai'));
         $data = array(
-            // All sanitized inputs
+            // Edit: user can change all these fields; see submit().
             'tanggal_pesanan' => $tanggal_pesanan,
             'nomor_karyawan'  => $this->input->post('nomor_karyawan'),
             'nama'            => $this->input->post('nama'),
@@ -160,6 +150,7 @@ class Order extends MY_Controller {
         if ($this->order_model->update($id, $data)) {
             redirect('order/detail');
         } else {
+            // For debugging DB problems
             echo "Database error:<br>";
             echo $this->db->last_query();
             print_r($this->db->error());
@@ -169,7 +160,7 @@ class Order extends MY_Controller {
     }
 
     /**
-     * Show details (admin or owner only).
+     * Show a single reservation, enforcing admin or ownership access.
      */
     public function single($id) {
         $pesanan = $this->order_model->getpesanan_with_kendaraan_by_id($id);
@@ -184,21 +175,44 @@ class Order extends MY_Controller {
     }
 
     /**
-     * List all pending orders for admin approval.
+     * Admin: View all pending orders, with available vehicles/drivers for approval UI.
      */
     public function pending_orders() {
         if ($this->user_session['role'] !== 'admin') {
             show_error('Access denied.');
             return;
         }
+
         $this->db->where('status', 'pending');
         $this->db->where('kendaraan IS NULL', null, false);
         $data['pending_orders'] = $this->db->get('PK_pesanan')->result();
+
+        // Get all possible vehicles/drivers for assignment (modal selectors).
+        $this->load->model('vehicle_model');
+        $kendaraan_options = [];
+        foreach ($this->vehicle_model->get_available() as $vehicle) {
+            $kendaraan_options[] = [
+                'id' => $vehicle->id,
+                'label' => $vehicle->nama_kendaraan . " [{$vehicle->no_pol}]"
+            ];
+        }
+        $data['kendaraan_options'] = $kendaraan_options;
+
+        $this->load->model('driver_model');
+        $driver_options = [];
+        foreach ($this->driver_model->get_available() as $driver) {
+            $driver_options[] = [
+                'id' => $driver->id,
+                'label' => $driver->nama
+            ];
+        }
+        $data['driver_options'] = $driver_options;
+
         $this->load->view('admin/pending_list', $data);
     }
 
     /**
-     * Admin: Show approval form, vehicle and driver options available.
+     * Admin: Loads approval form for given order.
      */
     public function approve($id)
     {
@@ -208,6 +222,7 @@ class Order extends MY_Controller {
         }
         $order = $this->order_model->getpesanan_by_id($id);
         if (!$order || $order->status !== 'pending') {
+            // If already processed or missing, don't allow approve.
             show_error('Pesanan tidak ditemukan atau sudah disetujui.');
             return;
         }
@@ -234,30 +249,53 @@ class Order extends MY_Controller {
     }
 
     /**
-     * Admin: Process approve form submission (actually assigns driver+vehicle).
-     * All transaction and rollback logic is in the model for cleanliness.
+     * Admin: AJAX endpoint for approving an order (driver+vehicle assignment).
+     * Why: Used by frontend to update order approval state inline, without reload. 
+     * Any transactional/rollback logic is handled in the model itself for clarity and single-responsibility.
      */
-    public function do_approve($id)
+    public function do_approve_ajax($id)
     {
         if ($this->user_session['role'] !== 'admin') {
-            show_error('Access denied.');
-            return;
+            echo json_encode(['status' => 'error', 'message' => 'Access denied.']); exit;
         }
         $kendaraan_id = (int)$this->input->post('kendaraan');
         $driver_id = (int)$this->input->post('driver');
         $result = $this->order_model->approve_full_order($id, $kendaraan_id, $driver_id);
 
         if (isset($result['success'])) {
-            $this->session->set_flashdata('success', 'Pesanan berhasil disetujui.');
-            redirect('order/pending_orders');
+            echo json_encode(['status' => 'success', 'message' => 'Pesanan berhasil disetujui.']);
         } else {
-            $this->session->set_flashdata('error', isset($result['error']) ? $result['error'] : 'Gagal menyetujui pesanan.');
-            redirect('order/approve/' . $id);
+            echo json_encode([
+                'status' => 'error',
+                'message' => isset($result['error']) ? $result['error'] : 'Gagal menyetujui pesanan.'
+            ]);
         }
     }
 
     /**
-     * Admin: Paginated, filterable list of all bookings for reporting.
+     * Admin: AJAX endpoint to reject a pending order.
+     * Why: Allows real-time feedback for users; used by admin JS interface.
+     */
+    public function reject_ajax($id)
+    {
+        if ($this->user_session['role'] !== 'admin') {
+            echo json_encode(['status' => 'error', 'message' => 'Access denied.']); exit;
+        }
+        $order = $this->order_model->getpesanan_by_id($id);
+        if (!$order || $order->status !== 'pending') {
+            echo json_encode(['status' => 'error', 'message' => 'Pesanan tidak ditemukan atau sudah diproses.']);
+            exit;
+        }
+        if ($this->order_model->reject_order($id)) {
+            echo json_encode(['status' => 'success', 'message' => 'Pesanan berhasil ditolak.']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Gagal menolak pesanan.']);
+        }
+    }
+
+    /**
+     * Admin: Paginated, filterable list of all bookings for monitoring/analysis.
+     * Why: Enables management to review fleet use historically or operationally.
      */
     public function order_report() {
         if ($this->user_session['role'] !== 'admin') {
@@ -267,12 +305,12 @@ class Order extends MY_Controller {
         $this->load->library('pagination');
         $date_from = $this->input->get('date_from');
         $date_to = $this->input->get('date_to');
-        // Get filtered rows count for pagination
+        // 2-step approach: first, get total count for pagination, then page data
         $this->db->select('p.id')
             ->from('PK_pesanan p')
             ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
             ->where_in('p.status', ['approved', 'done', 'no confirmation', 'rejected']);
-        // Filter by date if provided
+        // Apply date filter if set (filtering may be slow if not indexed)
         if ($date_from && $date_to) {
             $this->db->where('p.tanggal_pakai >=', $date_from);
             $this->db->where('p.tanggal_pakai <=', $date_to);
@@ -280,7 +318,7 @@ class Order extends MY_Controller {
             $this->db->where('p.tanggal_pakai', $date_from);
         }
         $total_rows = $this->db->count_all_results();
-        // Set up pagination config
+
         $config['base_url'] = site_url('order/order_report');
         $config['per_page'] = 10;
         $config['page_query_string'] = TRUE;
@@ -288,7 +326,8 @@ class Order extends MY_Controller {
         $config['total_rows'] = $total_rows;
         $page = $this->input->get('page') ? (int)$this->input->get('page') : 0;
         $this->pagination->initialize($config);
-        // Now get paged (and filtered) orders for view
+
+        // Get actual record data for current page; join all related info for full report
         $this->db->select('p.*, k.no_pol, k.nama_kendaraan, d.nama as nama_driver')
             ->from('PK_pesanan p')
             ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
@@ -310,25 +349,5 @@ class Order extends MY_Controller {
         $data['date_to'] = $date_to;
 
         $this->load->view('admin/order_report', $data);
-    }
-
-    public function reject($id)
-    {
-        if ($this->user_session['role'] !== 'admin') {
-            show_error('Access denied.');
-            return;
-        }
-        $order = $this->order_model->getpesanan_by_id($id);
-        if (!$order || $order->status !== 'pending') {
-            show_error('Pesanan tidak ditemukan atau tidak dapat ditolak.');
-            return;
-        }
-
-        if ($this->order_model->reject_order($id)) {
-            $this->session->set_flashdata('success', 'Pesanan berhasil ditolak.');
-        } else {
-            $this->session->set_flashdata('error', 'Gagal menolak pesanan.');
-        }
-        redirect('order/pending_orders');
     }
 }

@@ -51,8 +51,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $route['default_controller'] = 'home';
 $route['order/submit'] = 'order/submit';
-$route['order/detail'] = 'order/detail';
-$route['order/detail/(:num)'] = 'order/detail/$1';
 $route['order/update/(:num)'] = 'order/update/$1';
 $route['order/edit/(:num)'] = 'order/edit/$1';
 $route['order/pending_orders'] = 'order/pending_orders';

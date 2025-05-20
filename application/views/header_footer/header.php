@@ -49,7 +49,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="<?php echo base_url('index.php/home/index'); ?>" class="site_title"><i class="fa fa-car"></i> <span>Pesan Kendaraan</span></a>
+              <a href="<?php echo base_url('index.php/home/index'); ?>" class="site_title"><i class="fa fa-car"></i> <span style="font-size: 21px;">Pesan Kendaraan</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -79,7 +79,7 @@
                   <ul class="nav child_menu">
                     <li><a href="<?php echo base_url('index.php/home/index'); ?>">Dashboard</a></li>
                     <li><a href="<?php echo base_url('index.php/order/submit'); ?>">Pesan Kendaraan</a></li>
-                    <li><a href="<?php echo base_url('index.php/order/detail'); ?>">Detail Pesanan</a></li>
+                    <li><a href="<?php echo base_url('index.php/order/order_user'); ?>">Detail Pesanan</a></li>
                     <?php if ($user_session['role'] === 'admin'): ?>
                     <li>
                         <a href="<?php echo base_url('index.php/order/pending_orders'); ?>">Menunggu Persetujuan</a>

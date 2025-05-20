@@ -20,43 +20,6 @@
     <link href="<?php echo base_url('assets/vendors/sweetalert2/dist/sweetalert2.min.css'); ?>" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="<?php echo base_url('assets/build/css/custom.min.css'); ?>" rel="stylesheet">
-    <style>
-      body.login {
-        background: linear-gradient(120deg, #f8fafc, #c0cfe2 90%);
-      }
-      h1 {
-        font-weight: 600;
-      }
-      .login_content {
-        box-shadow: 0 4px 24px rgba(0,0,0,.04), 0 1.5px 10px rgba(100,130,180,.16);
-        border-radius: 12px;
-        padding: 30px 35px 35px 35px;
-        background: #fff;
-      }
-      .login_content .btn.submit {
-        background: #2a3f54;
-        color: #fff;
-        font-weight: 500;
-        transition: background .2s;
-      }
-      .login_content .btn.submit:hover {
-        background: #203346;
-      }
-      .reset_pass,
-      .change_link {
-        color: #888;
-        font-size: 90%;
-      }
-      .change_link a {
-        pointer-events: none;
-        color: #bbb;
-        text-decoration: line-through;
-        cursor: not-allowed;
-      }
-      .fa-car {
-        color: #2a3f54;
-      }
-    </style>
   </head>
   <body class="login">
     <div>
@@ -97,40 +60,6 @@
             </form>
           </section>
         </div>
-
-        <!-- 
-        <div id="register" class="animate form registration_form">
-          <section class="login_content">
-            <form>
-              <h1>Create Account</h1>
-              <div>
-                <input type="text" class="form-control" placeholder="Username" required="" />
-              </div>
-              <div>
-                <input type="email" class="form-control" placeholder="Email" required="" />
-              </div>
-              <div>
-                <input type="password" class="form-control" placeholder="Password" required="" />
-              </div>
-              <div>
-                <a class="btn btn-default submit" href="index.html">Submit</a>
-              </div>
-              <div class="clearfix"></div>
-              <div class="separator">
-                <p class="change_link">Already a member ?
-                  <a href="#signin" class="to_register"> Log in </a>
-                </p>
-                <div class="clearfix"></div>
-                <br />
-                <div>
-                  <h1><i class="fa fa-paw"></i> Login Pemesanan Kendaraan</h1>
-                  <p>©2016 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p>
-                </div>
-              </div>
-            </form>
-          </section>
-        </div>
-        -->
       </div>
     </div>
     <!-- SweetAlert2 JS -->
