@@ -15,6 +15,21 @@ function format_time($input) {
 }
 ?>
 
+<!-- SWEETALERT2 SUCCESS ON NEW RESERVATION -->
+<?php if ($this->session->flashdata('success_message')): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  Swal.fire({
+    icon: 'success',
+    title: 'Berhasil',
+    text: '<?= addslashes($this->session->flashdata('success_message')) ?>',
+    timer: 2200,
+    showConfirmButton: false
+  });
+});
+</script>
+<?php endif; ?>
+
 <div class="right_col" role="main">
   <div class="page-title">
     <div class="title_left">
@@ -94,7 +109,11 @@ function format_time($input) {
                       <button type="button" class="btn btn-info btn-xs last"
                           data-toggle="modal"
                           data-target="#modalDetail<?= $row->id ?>">Detail</button>
-                      <?php if (!empty($row->kendaraan) && strtolower($row->status) === 'approved'): ?>
+                      <?php
+                      $status_disabled = ['approved', 'rejected', 'no confirmation', 'done'];
+                      $current_status = strtolower(trim($row->status)); // pastikan aman dari spasi/format
+
+                      if (in_array($current_status, $status_disabled)): ?>
                         <button class="btn btn-secondary btn-xs last disabled" tabindex="-1" aria-disabled="true" style="pointer-events:none;opacity:0.6;">Edit</button>
                         <button class="btn btn-secondary btn-xs last disabled" tabindex="-1" aria-disabled="true" style="pointer-events:none;opacity:0.6;">Hapus</button>
                       <?php else: ?>
@@ -211,6 +230,7 @@ function format_time($input) {
         </div>
         <div class="modal-body">
           <input type="hidden" name="id" value="<?= $row->id ?>">
+          <input type="hidden" name="tanggal_pesanan" value="<?= htmlspecialchars($row->tanggal_pesanan) ?>">
           <div class="form-group">
             <label>Tujuan</label>
             <input type="text" class="form-control" name="tujuan" value="<?= htmlspecialchars($row->tujuan) ?>" required>
@@ -268,7 +288,6 @@ function format_time($input) {
 <?php endforeach; ?>
 <?php endif; ?>
 
-
 <script>
 $(function(){
 
@@ -290,8 +309,7 @@ $(function(){
         timer: 2000,
         showConfirmButton: false
       }).then(function(){
-        // Optionally reload the table/page, or update the row with new data
-        location.reload(); // or update the row in JS if desired
+        location.reload();
       });
     }).fail(function(xhr){
       Swal.fire({
@@ -302,7 +320,7 @@ $(function(){
     });
   });
 
-  // AJAX: Delete
+  // AJAX: Delete (UPDATED)
   $('.formDeletePesanan').submit(function(e){
     e.preventDefault();
     var $form = $(this);
@@ -310,15 +328,24 @@ $(function(){
     var modalId = '#modalHapus' + orderId;
 
     $.post('<?= site_url('order/delete/') ?>' + orderId, function(response){
+      try { response = typeof response === 'object' ? response : JSON.parse(response); } catch(e){}
       $(modalId).modal('hide');
-      $('#orderRow'+orderId).fadeOut(500, function(){$(this).remove();});
-      Swal.fire({
-        icon:'success',
-        title:'Dihapus',
-        text:'Pesanan berhasil dihapus.',
-        timer: 1800,
-        showConfirmButton: false
-      });
+      if(response && response.status === 'success'){
+        $('#orderRow'+orderId).fadeOut(500, function(){$(this).remove();});
+        Swal.fire({
+          icon:'success',
+          title:'Dihapus',
+          text:'Pesanan berhasil dihapus.',
+          timer: 1800,
+          showConfirmButton: false
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Gagal',
+          text: (response && response.message) ? response.message : 'Gagal menghapus pesanan. Silakan coba lagi.'
+        });
+      }
     }).fail(function(xhr){
       Swal.fire({
         icon: 'error',

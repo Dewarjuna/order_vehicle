@@ -1,17 +1,11 @@
 <?php $this->load->view('header_footer/header'); ?>
 
-<?php
-// Time formatting helper - place ONCE
-function format_time($input) {
-    if (!$input) return '-';
-    $parts = explode('.', $input);
-    $raw = $parts[0];
-    $t = date_create_from_format('H:i:s', $raw);
-    if ($t) return date_format($t, 'H:i');
-    if (preg_match('/^\d{2}:\d{2}$/', $input)) return $input;
-    return substr($input,0,5);
+<style>
+.table th, .table td {
+    text-align: center !important;
+    vertical-align: middle !important;
 }
-?>
+</style>
 
 <div class="right_col" role="main">
   <div class="">
@@ -22,37 +16,26 @@ function format_time($input) {
     </div>
     <div class="clearfix"></div>
     <div class="row">
-      <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="col-md-12">
         <div class="x_panel">
-          <div class="x_title">
-            <!-- <h2>Daftar Pesanan Approved</h2> -->
-            <div class="clearfix"></div>
-          </div>
+          <div class="x_title"><div class="clearfix"></div></div>
           <div class="x_content">
             <!-- Filter Form -->
-            <form method="get" class="form-inline" style="margin-bottom:20px;">
+            <form id="filter-form" class="form-inline" style="margin-bottom:20px;">
               <div class="form-group">
                 <label for="date_from">Tanggal Pakai:</label>
-                <input type="date" id="date_from" name="date_from" class="form-control" value="<?= htmlspecialchars($date_from) ?>">
+                <input type="date" id="date_from" name="date_from" class="form-control">
               </div>
               <span style="margin:0 8px;">s/d</span>
               <div class="form-group">
-                <input type="date" id="date_to" name="date_to" class="form-control" value="<?= htmlspecialchars($date_to) ?>">
+                <input type="date" id="date_to" name="date_to" class="form-control">
               </div>
               <button type="submit" class="btn btn-primary">Filter</button>
-              <a href="<?= site_url('order/order_report'); ?>" class="btn btn-default">Reset</a>
+              <button type="button" class="btn btn-default" id="resetFilter">Reset</button>
             </form>
 
-            <style>
-            .table th, .table td {
-                text-align: center !important;
-                vertical-align: middle !important;
-            }
-            </style>
-
-            <!-- Orders Table -->
             <div class="table-responsive">
-              <table class="table table-striped jambo_table">
+              <table id="datatable" class="table table-striped jambo_table" style="width:100%">
                 <thead>
                   <tr class="headings">
                     <th class="column-title">No.</th>
@@ -62,78 +45,12 @@ function format_time($input) {
                     <th class="column-title">Kendaraan</th>
                     <th class="column-title">Driver</th>
                     <th class="column-title">Status</th>
-                    <th class="column-title no-link last"><span class="nobr">Aksi</span></th>
+                    <th class="column-title">Aksi</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <?php if (!empty($orders)): ?>
-                    <?php $no = 1 + ($this->input->get('page') ? (int)$this->input->get('page') : 0); ?>
-                    <?php foreach ($orders as $row): ?>
-                      <tr>
-                        <td><?= $no++; ?></td>
-                        <td><?= date('d-m-Y', strtotime($row->tanggal_pakai)); ?></td>
-                        <td><?= htmlspecialchars($row->nama); ?></td>
-                        <td><?= htmlspecialchars($row->tujuan); ?></td>
-                        <td>
-                            <?php
-                              $status = strtolower($row->status);
-                              if ($status === 'rejected' || $status === 'no confirmation') {
-                                  echo '<em class="text-muted">- Tidak Berlaku -</em>';
-                              } elseif (!empty($row->no_pol) && !empty($row->nama_kendaraan)) {
-                                  echo htmlspecialchars($row->no_pol) . ' (' . htmlspecialchars($row->nama_kendaraan) . ')';
-                              } elseif (!empty($row->kendaraan)) {
-                                  echo htmlspecialchars($row->kendaraan);
-                              } else {
-                                  echo 'Menunggu Persetujuan';
-                              }
-                            ?>
-                        </td>
-                        <td>
-                            <?php
-                              if ($status === 'rejected' || $status === 'no confirmation') {
-                                  echo '<em class="text-muted">- Tidak Berlaku -</em>';
-                              } elseif (!empty($row->nama_driver)) {
-                                  echo htmlspecialchars($row->nama_driver);
-                              } elseif (!empty($row->driver)) {
-                                  echo htmlspecialchars($row->driver);
-                              } else {
-                                  echo '-';
-                              }
-                            ?>
-                        </td>
-                        <td>
-                          <?php
-                            $status = strtolower($row->status);
-                            if ($status === 'approved') {
-                                echo '<span class="label label-primary" style="font-size:14px;">Telah disetujui - Ongoing</span>';
-                            } elseif ($status === 'done') {
-                                echo '<span class="label label-success" style="font-size:14px;">Selesai</span>';
-                            } elseif ($status === 'pending') {
-                                echo '<span class="label label-warning" style="font-size:14px;">Menunggu</span>';
-                            } elseif ($status === 'rejected') {
-                                echo '<span class="label label-danger" style="font-size:14px;">Ditolak</span>';
-                            } elseif ($status === 'no confirmation') {
-                                echo '<span class="label label-default" style="font-size:14px;">Tidak Ada Konfirmasi</span>';
-                            } else {
-                                echo '<span style="font-size:14px;">'.htmlspecialchars($row->status).'</span>';
-                            }
-                          ?>
-                        </td>
-                        <td>
-                        <button class="btn btn-info btn-xs last"
-                          data-toggle="modal"
-                          data-target="#modalDetail<?= $row->id ?>">Detail</button>
-                        </td>
-                      </tr>
-                    <?php endforeach; ?>
-                  <?php else: ?>
-                    <tr><td colspan="8" class="text-center">Tidak ada data pesanan disetujui.</td></tr>
-                  <?php endif; ?>
-                </tbody>
+                <tbody></tbody>
               </table>
             </div>
-            <!-- Pagination -->
-            <div><?= $pagination; ?></div>
           </div>
         </div>
       </div>
@@ -141,78 +58,18 @@ function format_time($input) {
   </div>
 </div>
 
-<!-- All modals: one detail modal per order -->
-<?php if (!empty($orders)): ?>
-<?php foreach ($orders as $row): ?>
-<div class="modal fade" id="modalDetail<?= $row->id ?>" tabindex="-1" role="dialog" aria-labelledby="modalDetailLabel<?= $row->id ?>" aria-hidden="true">
+<!-- Single AJAX Modal for Detail -->
+<div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetailLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header bg-info text-white">
-        <h5 class="modal-title" id="modalDetailLabel<?= $row->id ?>">
-          <i class="fa fa-info-circle"></i> Detail Pesanan #<?= $row->id ?>
+        <h5 class="modal-title" id="modalDetailLabel">
+          <i class="fa fa-info-circle"></i> Detail Pesanan
         </h5>
         <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
       </div>
-      <div class="modal-body" style="background: #f9fbfc;">
-        <table class="table table-striped table-bordered">
-          <tr><th>Tanggal Pesanan</th><td><?= date('d-m-Y', strtotime($row->tanggal_pesanan)) ?></td></tr>
-          <tr><th>Nomor Karyawan</th><td><?= htmlspecialchars($row->nomor_karyawan) ?></td></tr>
-          <tr><th>Nama Karyawan</th><td><?= htmlspecialchars($row->nama) ?></td></tr>
-          <tr><th>Divisi</th><td><?= htmlspecialchars($row->divisi) ?></td></tr>
-          <tr><th>Tujuan</th><td><?= htmlspecialchars($row->tujuan) ?></td></tr>
-          <tr><th>Tanggal Pakai</th><td><?= date('d-m-Y', strtotime($row->tanggal_pakai)) ?></td></tr>
-          <tr><th>Waktu Mulai</th><td><?= format_time($row->waktu_mulai) ?></td></tr>
-          <tr><th>Waktu Selesai</th><td><?= format_time($row->waktu_selesai) ?></td></tr>
-          <tr><th>Keperluan</th><td><?= nl2br(htmlspecialchars($row->keperluan)) ?></td></tr>
-          <tr><th>Kendaraan</th>
-            <td>
-            <?php
-                if (!empty($row->no_pol) && !empty($row->nama_kendaraan)) {
-                    echo htmlspecialchars($row->no_pol) . ' (' . htmlspecialchars($row->nama_kendaraan) . ')';
-                } elseif (!empty($row->kendaraan)) {
-                    echo htmlspecialchars($row->kendaraan);
-                } else {
-                    echo 'Menunggu Persetujuan';
-                }
-            ?>
-            </td>
-          </tr>
-          <tr><th>Driver</th>
-            <td>
-                <?php
-                  if (!empty($row->nama_driver)) {
-                      echo htmlspecialchars($row->nama_driver);
-                  } elseif (!empty($row->driver)) {
-                      echo htmlspecialchars($row->driver);
-                  } else {
-                      echo 'Menunggu Persetujuan';
-                  }
-                ?>
-            </td>
-          </tr>
-          <tr><th>Jumlah Orang</th><td><?= (int)$row->jumlah_orang ?></td></tr>
-          <tr><th>Pemesan</th><td><?= htmlspecialchars($row->pemesan) ?></td></tr>
-          <tr><th>Status</th>
-            <td>
-                <?php
-                    $status = strtolower($row->status);
-                    if ($status === 'approved') {
-                        echo '<span class="label label-primary" style="font-size:14px;">Telah disetujui - Ongoing</span>';
-                    } elseif ($status === 'done') {
-                        echo '<span class="label label-success" style="font-size:14px;">Selesai</span>';
-                    } elseif ($status === 'pending') {
-                        echo '<span class="label label-warning" style="font-size:14px;">Menunggu</span>';
-                    } elseif ($status === 'rejected') {
-                        echo '<span class="label label-danger" style="font-size:14px;">Ditolak</span>';
-                    } elseif ($status === 'no confirmation') {
-                        echo '<span class="label label-default" style="font-size:14px;">Tidak Ada Konfirmasi</span>';
-                    } else {
-                        echo '<span style="font-size:14px;">'.htmlspecialchars($row->status).'</span>';
-                    }
-                ?>
-            </td>
-          </tr>
-        </table>
+      <div class="modal-body" style="background: #f9fbfc;" id="modalDetailBody">
+        Memuat...
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -220,7 +77,120 @@ function format_time($input) {
     </div>
   </div>
 </div>
-<?php endforeach; ?>
-<?php endif; ?>
 
 <?php $this->load->view('header_footer/footer'); ?>
+
+<script>
+function formatStatus(status) {
+    var s = status.toLowerCase();
+    if (s == 'approved')
+        return '<span class="label label-primary" style="font-size:14px;">Telah disetujui - Ongoing</span>';
+    if (s == 'done')
+        return '<span class="label label-success" style="font-size:14px;">Selesai</span>';
+    if (s == 'pending')
+        return '<span class="label label-warning" style="font-size:14px;">Menunggu</span>';
+    if (s == 'rejected')
+        return '<span class="label label-danger" style="font-size:14px;">Ditolak</span>';
+    if (s == 'no confirmation')
+        return '<span class="label label-default" style="font-size:14px;">Tidak Ada Konfirmasi</span>';
+    return '<span style="font-size:14px;">'+status+'</span>';
+}
+function formatKendaraan(no_pol, nama_kendaraan, kendaraan, status) {
+    status = (status || '').toLowerCase();
+    if (status === 'rejected' || status === 'no confirmation') {
+        return '<em class="text-muted">- Tidak Berlaku -</em>';
+    } else if (status === 'approved' || status === 'done') {
+        if (no_pol && nama_kendaraan) {
+            return $('<div>').text(no_pol + " (" + nama_kendaraan + ")").html();
+        } else if (kendaraan) {
+            return $('<div>').text(kendaraan).html();
+        } else {
+            return 'Menunggu Persetujuan';
+        }
+    }
+    return 'Menunggu Persetujuan';
+}
+
+function formatDriver(nama_driver, driver, status) {
+    status = (status || '').toLowerCase();
+    if (status === 'rejected' || status === 'no confirmation') {
+        return '<em class="text-muted">- Tidak Berlaku -</em>';
+    } else if (status === 'approved' || status === 'done') {
+        if (nama_driver) {
+            return $('<div>').text(nama_driver).html();
+        } else if (driver) {
+            return $('<div>').text(driver).html();
+        } else {
+            return 'Menunggu Persetujuan';
+        }
+    }
+    return 'Menunggu Persetujuan';
+}
+$(document).ready(function() {
+  if ($.fn.dataTable.isDataTable('#datatable')) {
+      $('#datatable').DataTable().destroy();
+  }
+  var table = $('#datatable').DataTable({
+      "processing": true,
+      "serverSide": true,
+      "ordering": false,
+      "searching": true,
+      "columnDefs": [
+          { "width": "60px", "targets": 0 }
+      ],
+      "ajax": {
+          "url": "<?= site_url('order/order_report_ajax'); ?>",
+          "type": "POST",
+          "data": function(d) {
+              d.date_from = $('#date_from').val();
+              d.date_to = $('#date_to').val();
+          }
+      },
+      columns: [
+      {data: 0}, // No.
+      {data: 1}, // Tanggal Pakai
+      {data: 2}, // Pemakai
+      {data: 3}, // Tujuan
+      {   // Kendaraan
+          data: null,
+          render: function(data, type, row) {
+              return formatKendaraan(row[4], row[5], row[6], row[9]); // no_pol, nama_kendaraan, kendaraan, status
+          }
+      },
+      {   // Driver
+          data: null,
+          render: function(data, type, row) {
+              return formatDriver(row[7], row[8], row[9]); // nama_driver, driver, status
+          }
+      },
+      {   // Status
+          data: 9,
+          render: function(data, type, row) {
+              return formatStatus(data);
+          }
+      },
+      {data: 10, orderable: false} // Aksi/Detail button
+    ]
+  });
+
+  $('#filter-form').on('submit', function(e){
+      e.preventDefault();
+      table.ajax.reload();
+  });
+
+  $('#resetFilter').on('click', function() {
+      $('#date_from').val('');
+      $('#date_to').val('');
+      table.ajax.reload();
+  });
+
+  $('#datatable').on('click', '.btn-detail', function() {
+      var id = $(this).data('id');
+      $('#modalDetailBody').html('Memuat...');
+      $('#modalDetail').modal('show');
+      $.get('<?= site_url('order/order_detail_ajax'); ?>/' + id, function(html) {
+          $('#modalDetailBody').html(html);
+      });
+  });
+});
+</script>

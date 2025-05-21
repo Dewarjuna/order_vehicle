@@ -25,9 +25,12 @@ class Order_model extends CI_Model {
         return $this->db->insert_id(); // Return new order's ID for confirmation/redirect
     }
 
-    public function insert_order($data) { return $this->db->insert($this->table_pesanan, $data); }
-    public function getpesanan_by_pemesan($pemesan) { return $this->db->get_where($this->table_pesanan, ['pemesan' => $pemesan])->result(); }
-    public function delete($id) { return $this->db->delete($this->table_pesanan, array('id' => $id)); }
+    public function insert_order($data) { 
+        return $this->db->insert($this->table_pesanan, $data); }
+    public function getpesanan_by_pemesan($pemesan) {
+         return $this->db->get_where($this->table_pesanan, ['pemesan' => $pemesan])->result(); }
+    public function delete($id) { 
+        return $this->db->delete($this->table_pesanan, array('id' => $id)); }
 
     /**
      * Update pesanan record and updated_at timestamp.
