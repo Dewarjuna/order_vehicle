@@ -35,6 +35,8 @@ class Home extends MY_Controller {
             $data['pending_orders']  = $this->order_model->count_orders_by_month_status($now, 'pending');
             $data['approved_orders'] = $this->order_model->count_orders_by_month_status($now, 'approved');
             $data['done_orders']     = $this->order_model->count_orders_by_month_status($now, 'done');
+            $data['rejected_orders'] = $this->order_model->count_orders_by_month_status($now, 'rejected');
+            $data['no_confirmation_orders'] = $this->order_model->count_orders_by_month_status($now, 'no confirmation');
         } else {
             // Normal users see only their order stats
             $data['user_orders'] = $this->order_model->count_user_orders_by_month($now, $nama);

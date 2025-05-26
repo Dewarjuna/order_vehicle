@@ -1,4 +1,3 @@
-<!-- <pre><?php var_dump($user_session); ?></pre> -->
 <?php $this->load->view('header_footer/header'); ?>
 
 <div class="right_col" role="main">
@@ -7,115 +6,164 @@
       <div class="title_left">
         <h3>Dashboard Pemesanan Kendaraan</h3>
       </div>
-      <div class="title_right">
-        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search for...">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button">Go!</button>
-            </span>
-          </div>
-        </div>
-      </div>
     </div>
+    
     <div class="clearfix"></div>
+    
     <div class="row">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="x_panel">
+      <div class="col-md-12">
+        <div class="x_panel" style="padding: 10px;">
           <div class="x_title">
-            <h2> Berikut adalah jumlah total pesanan kendaraan bulan ini beserta statusnya</h2>
-            <ul class="nav navbar-right panel_toolbox">
-              <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-              </li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><a href="#">Settings 1</a>
-                  </li>
-                  <li><a href="#">Settings 2</a>
-                  </li>
-                </ul>
-              </li>
-              <li><a class="close-link"><i class="fa fa-close"></i></a>
-              </li>
-            </ul>
+            <h2><i class="fa fa-dashboard"></i> Statistik Pesanan Bulan Ini</h2>
             <div class="clearfix"></div>
           </div>
-          <div class="x_content">
-          <div class="row" style="margin-bottom:30px;">
+          <div class="x_content" style="padding: 15px 5px;">
+            
             <?php if ($role === 'admin'): ?>
+            <!-- Admin Dashboard -->
+            <div class="row top_tiles">
+              
               <!-- Total Orders -->
-              <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="x_panel tile fixed_height_150" style="background:#e3e6f7;">
-                  <div class="x_title text-center" style="border-bottom:none;">
-                    <i class="fa fa-list-alt fa-2x" style="color:#3a4d9c;"></i>
-                    <h4 style="color:#3a4d9c; margin-top:10px;">Total Pesanan</h4>
-                  </div>
-                  <div class="x_content text-center">
-                    <strong style="font-size:2em; color:#3a4d9c;"><?= $total_orders ?></strong>
-                    <p class="dashboard-caption">Bulan ini</p>
-                  </div>
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background: #2A3F54; border-left: 5px solid #1ABB9C;">
+                  <div class="icon"><i class="fa fa-list-alt"></i></div>
+                  <div class="count"><?= $total_orders ?></div>
+                  <h3>Total Pesanan</h3>
+                  <p>Semua pesanan bulan ini</p>
                 </div>
               </div>
+              
               <!-- Pending Orders -->
-              <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="x_panel tile fixed_height_150" style="background:#fff5e5;">
-                  <div class="x_title text-center" style="border-bottom:none;">
-                    <i class="fa fa-hourglass-start fa-2x" style="color:#f39c12;"></i>
-                    <h4 style="color:#f39c12; margin-top:10px;">Pending</h4>
-                  </div>
-                  <div class="x_content text-center">
-                    <strong style="font-size:2em; color:#f39c12;"><?= $pending_orders ?></strong>
-                    <p class="dashboard-caption" style="color:#f39c12;">Belum Disetujui</p>
-                  </div>
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background: #fff; border-left: 5px solid #F39C12;">
+                  <div class="icon" style="color: #F39C12;"><i class="fa fa-hourglass-half"></i></div>
+                  <div class="count" style="color: #333;"><?= $pending_orders ?></div>
+                  <h3 style="color: #333;">Pending</h3>
+                  <p style="color: #73879C;">Menunggu persetujuan</p>
                 </div>
               </div>
+              
               <!-- Approved Orders -->
-              <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="x_panel tile fixed_height_150" style="background:#eafaf1;">
-                  <div class="x_title text-center" style="border-bottom:none;">
-                    <i class="fa fa-check-circle fa-2x" style="color:#27ae60;"></i>
-                    <h4 style="color:#27ae60; margin-top:10px;">Approved</h4>
-                  </div>
-                  <div class="x_content text-center">
-                    <strong style="font-size:2em; color:#27ae60;"><?= $approved_orders ?></strong>
-                    <p class="dashboard-caption" style="color:#27ae60;">Disetujui</p>
-                  </div>
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background: #fff; border-left: 5px solid #26B99A;">
+                  <div class="icon" style="color: #26B99A;"><i class="fa fa-check-circle"></i></div>
+                  <div class="count" style="color: #333;"><?= $approved_orders ?></div>
+                  <h3 style="color: #333;">Approved</h3>
+                  <p style="color: #73879C;">Disetujui</p>
                 </div>
               </div>
+              
               <!-- Done Orders -->
-              <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="x_panel tile fixed_height_150" style="background:#f5f5f5;">
-                  <div class="x_title text-center" style="border-bottom:none;">
-                    <i class="fa fa-flag-checkered fa-2x" style="color:#555;"></i>
-                    <h4 style="color:#555; margin-top:10px;">Selesai</h4>
-                  </div>
-                  <div class="x_content text-center">
-                    <strong style="font-size:2em; color:#555;"><?= $done_orders ?></strong>
-                    <p class="dashboard-caption" style="color:#555;">Pesanan Selesai</p>
-                  </div>
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background: #fff; border-left: 5px solid #3498DB;">
+                  <div class="icon" style="color: #3498DB;"><i class="fa fa-flag-checkered"></i></div>
+                  <div class="count" style="color: #333;"><?= $done_orders ?></div>
+                  <h3 style="color: #333;">Selesai</h3>
+                  <p style="color: #73879C;">Pesanan selesai</p>
                 </div>
               </div>
+              
+              <!-- Rejected Orders -->
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background: #fff; border-left: 5px solid #E74C3C;">
+                  <div class="icon" style="color: #E74C3C;"><i class="fa fa-times-circle"></i></div>
+                  <div class="count" style="color: #333;"><?= $rejected_orders ?></div>
+                  <h3 style="color: #333;">Ditolak</h3>
+                  <p style="color: #73879C;">Pesanan ditolak</p>
+                </div>
+              </div>
+              
+              <!-- No Confirmation -->
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background: #fff; border-left: 5px solid #95A5A6;">
+                  <div class="icon" style="color: #95A5A6;"><i class="fa fa-question-circle"></i></div>
+                  <div class="count" style="color: #333;"><?= $no_confirmation_orders ?></div>
+                  <h3 style="color: #333;">No Confirm</h3>
+                  <p style="color: #73879C;">Tidak ada konfirmasi</p>
+                </div>
+              </div>
+              
+            </div>
             <?php else: ?>
-              <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="x_panel tile fixed_height_150" style="background:#e3e6f7;">
-                  <div class="x_title text-center" style="border-bottom:none;">
-                    <i class="fa fa-list fa-2x" style="color:#3a4d9c;"></i>
-                    <h4 style="color:#3a4d9c; margin-top:10px;">Pesanan Anda</h4>
-                  </div>
-                  <div class="x_content text-center">
-                    <strong style="font-size:2em; color:#3a4d9c;"><?= $user_orders ?></strong>
-                    <p class="dashboard-caption">Bulan ini</p>
-                  </div>
+            <!-- User Dashboard -->
+            <div class="row top_tiles">
+              <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background: #2A3F54; border-left: 5px solid #1ABB9C;">
+                  <div class="icon"><i class="fa fa-list"></i></div>
+                  <div class="count"><?= $user_orders ?></div>
+                  <h3>Pesanan Anda</h3>
+                  <p>Bulan ini</p>
                 </div>
               </div>
+            </div>
             <?php endif; ?>
-          </div>
+            
           </div>
         </div>
       </div>
     </div>
+    
   </div>
 </div>
+
+<style>
+  /* Enhance the existing Gentellela tile styles */
+  .tile-stats {
+    border-radius: 5px;
+    position: relative;
+    display: block;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    min-height: 180px;
+    padding: 15px;
+  }
+  
+  .tile-stats:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    transform: translateY(-2px);
+  }
+  
+  .tile-stats .icon {
+    width: 50px;
+    height: 50px;
+    color: white;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    z-index: 1;
+    font-size: 30px;
+    line-height: 0;
+  }
+  
+  .tile-stats .count {
+    font-size: 38px;
+    font-weight: 700;
+    color: white;
+    margin-top: 10px;
+  }
+  
+  .tile-stats h3 {
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    font-weight: 600;
+  }
+  
+  .tile-stats p {
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+  }
+  
+  /* Animation delays for each tile */
+  .animated.flipInY:nth-child(1) { animation-delay: 0.1s; }
+  .animated.flipInY:nth-child(2) { animation-delay: 0.2s; }
+  .animated.flipInY:nth-child(3) { animation-delay: 0.3s; }
+  .animated.flipInY:nth-child(4) { animation-delay: 0.4s; }
+  .animated.flipInY:nth-child(5) { animation-delay: 0.5s; }
+  .animated.flipInY:nth-child(6) { animation-delay: 0.6s; }
+</style>
 
 <?php $this->load->view('header_footer/footer'); ?>

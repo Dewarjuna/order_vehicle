@@ -211,7 +211,7 @@ class Order_model extends CI_Model {
     {
         $today = date('Y-m-d');
         $this->db->where('status', 'pending');
-        $this->db->where('tanggal_pakai <', $today);
+        $this->db->where('tanggal_pakai <=', $today);
         $orders = $this->db->get('PK_pesanan')->result();
 
         foreach ($orders as $order) {

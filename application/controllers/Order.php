@@ -47,7 +47,10 @@ class Order extends MY_Controller {
         $this->load->helper('form');
         $this->load->library('form_validation');
         $this->form_validation->set_rules('tanggal_pesanan', 'Tanggal Pesanan', 'required');
-        // ... add other field validations as needed ...
+        $this->form_validation->set_rules('tanggal_pakai', 'Tanggal Pakai', 'required');
+        $this->form_validation->set_rules('waktu_mulai', 'Waktu Mulai', 'required');
+        $this->form_validation->set_rules('waktu_selesai', 'Waktu Selesai', 'required');
+        $this->form_validation->set_rules('keperluan', 'Keperluan', 'required');
         $this->form_validation->set_rules('jumlah_orang', 'Jumlah Orang', 'required|integer');
 
         if ($this->form_validation->run() == FALSE) {
@@ -437,7 +440,7 @@ public function order_detail_ajax($id) {
         echo 'Menunggu Persetujuan';
     }
     echo '</td></tr>';
-    echo '<tr><th>Driver</th><td>' . (!empty($row->nama_driver) ? htmlspecialchars($row->nama_driver) : '-') . '</td></tr>';
+    echo '<tr><th>Driver</th><td>' . (!empty($row->nama_driver) ? htmlspecialchars($row->nama_driver) : 'Menunggu Persetujuan') . '</td></tr>';
     echo '<tr><th>Jumlah Orang</th><td>' . (int)$row->jumlah_orang . '</td></tr>';
     echo '<tr><th>Pemesan</th><td>' . htmlspecialchars($row->pemesan) . '</td></tr>';
     echo '<tr><th>Status</th><td>' . htmlspecialchars($row->status) . '</td></tr>';

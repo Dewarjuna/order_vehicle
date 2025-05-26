@@ -2,66 +2,105 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
-| -------------------------------------------------------------------------
+|--------------------------------------------------------------------------
 | URI ROUTING
-| -------------------------------------------------------------------------
+|--------------------------------------------------------------------------
 | This file lets you re-map URI requests to specific controller functions.
-|
-| Typically there is a one-to-one relationship between a URL string
-| and its corresponding controller class/method. The segments in a
-| URL normally follow this pattern:
-|
-|	example.com/class/method/id/
-|
-| In some instances, however, you may want to remap this relationship
-| so that a different class/function is called than the one
-| corresponding to the URL.
-|
-| Please see the user guide for complete details:
-|
-|	https://codeigniter.com/userguide3/general/routing.html
-|
-| -------------------------------------------------------------------------
-| RESERVED ROUTES
-| -------------------------------------------------------------------------
-|
-| There are three reserved routes:
-|
-|	$route['default_controller'] = 'welcome';
-|
-| This route indicates which controller class should be loaded if the
-| URI contains no data. In the above example, the "welcome" class
-| would be loaded.
-|
-|	$route['404_override'] = 'errors/page_missing';
-|
-| This route will tell the Router which controller/method to use if those
-| provided in the URL cannot be matched to a valid route.
-|
-|	$route['translate_uri_dashes'] = FALSE;
-|
-| This is not exactly a route, but allows you to automatically route
-| controller and method names that contain dashes. '-' isn't a valid
-| class or method name character, so it requires translation.
-| When you set this option to TRUE, it will replace ALL dashes in the
-| controller and method URI segments.
-|
-| Examples:	my-controller/index	-> my_controller/index
-|		my-controller/my-method	-> my_controller/my_method
+| See the user guide for details.
+|--------------------------------------------------------------------------
 */
-$route['default_controller'] = 'home';
-$route['order/submit'] = 'order/submit';
-$route['order/update/(:num)'] = 'order/update/$1';
-$route['order/edit/(:num)'] = 'order/edit/$1';
-$route['order/pending_orders'] = 'order/pending_orders';
-$route['order/approve/(:num)'] = 'order/approve/$1';
-$route['order/do_approve/(:num)'] = 'order/do_approve/$1';
-$route['order/order_report'] = 'order/order_report';
-$route['order/order_report_ajax'] = 'order/order_report_ajax';
-$route['order/order_detail_ajax/(:num)'] = 'order/order_detail_ajax/$1';
-$route['user/add_user']        = 'user/add_user';      // For the Add User modal form POST
-$route['user/delete_user/(:num)'] = 'user/delete_user/$1'; // For the Delete User modal form POST
-//$route['driver'] = 'driver/driver_list';
-$route['order/reject/(:num)'] = 'order/reject/$1';
-$route['404_override'] = '';
-$route['translate_uri_dashes'] = FALSE;
+
+// RESERVED ROUTES
+$route['default_controller']    = 'home';
+$route['404_override']          = '';
+$route['translate_uri_dashes']  = FALSE;
+
+/* ==========================================================
+| PRETTY/PUBLIC ORDER ROUTES
+========================================================== */
+// Users can now access booking with easy URLs
+
+$route['booking']                  = 'order/create';         // Form to book/reserve
+$route['my-bookings']              = 'order/order_user';     // See my reservations
+$route['booking/view/(:num)']      = 'order/single/$1';      // View details of one booking
+$route['booking/update/(:num)']    = 'order/update/$1';      // Update booking
+
+// If you want to allow direct delete via URL, be careful (security)
+$route['booking/delete/(:num)']    = 'order/delete/$1';
+
+// Submission (usually POST, but aliased for completeness)
+$route['booking/submit']                  = 'order/submit';
+
+/* ==========================================================
+| KEEP ORIGINAL BACKEND/AJAX ORDER ROUTES (for admin/tools)
+========================================================== */
+$route['order/create']                      = 'order/create';
+$route['order/submit']                      = 'order/submit';
+$route['order/order_user']                  = 'order/order_user';
+$route['order/delete/(:num)']               = 'order/delete/$1';
+$route['order/update/(:num)']               = 'order/update/$1';
+$route['order/single/(:num)']               = 'order/single/$1';
+
+$route['order/pending_orders']              = 'order/pending_orders';
+$route['order/approve/(:num)']              = 'order/approve/$1';
+$route['order/do_approve_ajax/(:num)']      = 'order/do_approve_ajax/$1';
+$route['order/reject_ajax/(:num)']          = 'order/reject_ajax/$1';
+
+$route['order/order_report']                = 'order/order_report';
+$route['order/order_report_ajax']           = 'order/order_report_ajax';
+$route['order/order_detail_ajax/(:num)']    = 'order/order_detail_ajax/$1';
+
+/* ==========================================================
+| USER MANAGEMENT (Admin only) - Prettified
+========================================================== */
+$route['users']                             = 'user/user_list';            // List all users
+$route['users/view/(:num)']                 = 'user/user_detail/$1';       // User profile
+$route['users/edit/(:num)']                 = 'user/user_edit/$1';         // Edit user
+$route['users/delete/(:num)']               = 'user/delete/$1';            // Delete user
+$route['users/update/(:num)']               = 'user/update_user/$1';       // Update user (POST)
+$route['users/add']                         = 'user/add_user';             // Add user (POST)
+
+/* Keep original for internal tooling compatibility */
+$route['user/user_list']                    = 'user/user_list';
+$route['user/user_detail/(:num)']           = 'user/user_detail/$1';
+$route['user/user_edit/(:num)']             = 'user/user_edit/$1';
+$route['user/add_user']                     = 'user/add_user';
+$route['user/delete/(:num)']                = 'user/delete/$1';
+$route['user/update_user/(:num)']           = 'user/update_user/$1';
+
+/* ==========================================================
+| VEHICLE MANAGEMENT (Admin only) - Prettified
+========================================================== */
+$route['vehicles']                          = 'vehicle/vehicle_list';           // List all vehicles
+$route['vehicles/edit/(:num)']              = 'vehicle/updateKendaraan/$1';     // Edit vehicle
+$route['vehicles/delete/(:num)']            = 'vehicle/delete/$1';              // Delete vehicle
+$route['vehicles/add']                      = 'vehicle/storeKendaraan';         // Add vehicle
+
+$route['vehicle/vehicle_list']              = 'vehicle/vehicle_list';
+$route['vehicle/updateKendaraan/(:num)']    = 'vehicle/updateKendaraan/$1';
+$route['vehicle/storeKendaraan']            = 'vehicle/storeKendaraan';
+$route['vehicle/delete/(:num)']             = 'vehicle/delete/$1';
+
+/* ==========================================================
+| DRIVER MANAGEMENT (Admin only) - Prettified
+========================================================== */
+$route['drivers']                           = 'driver/driver_list';            // List all drivers
+$route['drivers/edit/(:num)']               = 'driver/updateNama/$1';          // Edit driver
+$route['drivers/delete/(:num)']             = 'driver/delete/$1';              // Delete driver
+$route['drivers/add']                       = 'driver/storeNama';              // Add driver
+
+$route['driver/driver_list']                = 'driver/driver_list';
+$route['driver/updateNama/(:num)']          = 'driver/updateNama/$1';
+$route['driver/storeNama']                  = 'driver/storeNama';
+$route['driver/delete/(:num)']              = 'driver/delete/$1';
+
+/* ==========================================================
+| AUTH (Login/Logout) - Prettified (optional, shorter)
+========================================================== */
+$route['login']                             = 'auth/index';
+$route['logout']                            = 'auth/logout';
+$route['login/submit']                      = 'auth/login';
+
+$route['auth']                              = 'auth/index';
+$route['auth/login']                        = 'auth/login';
+$route['auth/logout']                       = 'auth/logout';
