@@ -13,6 +13,8 @@ class MY_Controller extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        date_default_timezone_set('Asia/Jakarta');
+        
 
         // Gather session data into $user_session for consistent, centralized access.
         $this->user_session = array(

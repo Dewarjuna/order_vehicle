@@ -264,7 +264,7 @@ $(document).ready(function() {
             return;
         }
         $.ajax({
-          url: 'http://localhost/order_vehicle/index.php/home/ajax_status_tile_counts',
+          url: '<?= site_url('home/ajax_status_tile_counts') ?>',
           type: 'POST',
           data: { months: months },
           dataType: 'json',

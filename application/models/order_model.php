@@ -73,6 +73,25 @@ class Order_model extends CI_Model {
     }
 
     /**
+     * Count orders for multiple months
+     */
+    public function count_orders_by_months($months = []) {
+        if (empty($months)) return 0;
+        $this->db->where_in("LEFT(tanggal_pesanan, 7)", $months);
+        return $this->db->count_all_results($this->table_pesanan);
+    }
+
+    /**
+     * Count orders with specific status for multiple months
+     */
+    public function count_orders_by_months_status($months = [], $status = null) {
+        if (empty($months)) return 0;
+        $this->db->where_in("LEFT(tanggal_pesanan, 7)", $months);
+        if ($status) $this->db->where('status', $status);
+        return $this->db->count_all_results($this->table_pesanan);
+    }
+
+    /**
      * Get order (and related kendaraan/driver info) by ID.
      */
     public function getpesanan_with_kendaraan_by_id($id) {
