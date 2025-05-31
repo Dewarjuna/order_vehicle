@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select2 Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"></script>
+</head>
+<body>
+    <label>Pilih Bulan:</label>
+    <select id="months" multiple>
+      <option value="2024-05">May 2024</option>
+      <option value="2024-04">April 2024</option>
+      <option value="2024-03">March 2024</option>
+    </select>
+    <button id="btn-filter-months">Terapkan Filter</button>
+    <script>
+    $(document).ready(function() {
+      $('#months').select2();
+      $('#btn-filter-months').click(function(){
+        var months = $('#months').val();
+        alert('Button works! Months selected: ' + months);
+      });
+    });
+    </script>
+</body>
+</html>
