@@ -60,9 +60,10 @@ class Order_model extends CI_Model {
         $this->db->where("LEFT(tanggal_pesanan, 7) = '$month'", NULL, FALSE);
         return $this->db->count_all_results($this->table_pesanan);
     }
-    public function count_orders_by_month_status($month, $status) {
-        $this->db->where("LEFT(tanggal_pesanan, 7) = '$month'", NULL, FALSE);
-        $this->db->where('status', $status);
+    public function count_orders_by_month_status($month = [], $status ="null") {
+        if (empty($month)) return 0; // No month provided, return 0
+        $this->db->where("LEFT(tanggal_pesanan, 7) = '$month'");
+        if ($status) $this->db->where('status', $status);
         return $this->db->count_all_results($this->table_pesanan);
     }
     public function count_user_orders_by_month($month, $pemesan) {
@@ -235,4 +236,15 @@ class Order_model extends CI_Model {
         $this->db->where('id', $id);
         return $this->db->update($this->table_pesanan, $data);
     }
+
+    // Add this method to your Order_model class
+public function get_orders_by_status($status) {
+    $this->db->select('p.*, k.no_pol, k.nama_kendaraan, d.nama as nama_driver')
+        ->from('PK_pesanan p')
+        ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
+        ->join('PK_driver d', 'p.driver = d.id', 'left')
+        ->where('p.status', $status)
+        ->order_by('p.tanggal_pakai', 'DESC');
+    return $this->db->get()->result();
+}
 }

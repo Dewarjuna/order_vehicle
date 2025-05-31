@@ -135,6 +135,10 @@ $(document).ready(function() {
       "serverSide": true,
       "ordering": false,
       "searching": true,
+      "paging": true,
+      "lengthChange": true,
+      "responsive": true,
+      "autoWidth": false,
       "columnDefs": [
           { "width": "60px", "targets": 0 }
       ],

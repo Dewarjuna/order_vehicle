@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,6 +46,17 @@
     <link href="<?php echo base_url('assets/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'); ?>" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="<?php echo base_url('assets/build/css/custom.min.css'); ?>" rel="stylesheet">
+
+    <style>
+      .sidebar-logout .btn {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: background 0.2s;
+      }
+      .sidebar-logout .btn:hover {
+        background: #c9302c;
+        color: #fff;
+      }
+    </style>
   </head>
 
   <body class="nav-md">
@@ -66,11 +76,23 @@
                 <img src="<?php echo base_url("assets/production/images/img.jpg") ?>" alt="..." class="img-circle profile_img">
               </div>
               <div class="profile_info">
-                    <span>Welcome,</span>
-                    <h2><?php echo !empty($user_session['nama']) ? $user_session['nama'] : 'User'; ?></h2>
-                    <small>Role: <?php echo !empty($user_session['role']) ? $user_session['role'] : '-'; ?></small>
-                </div>
+                <span>Welcome</span>
+                <h2><?php echo !empty($user_session['nama']) ? $user_session['nama'] : 'User'; ?></h2>
+                <h2>Role: <?php echo !empty($user_session['role']) ? $user_session['role'] : '-'; ?></h2>
+              </div>
               <div class="clearfix"></div>
+
+              <!-- ------------------------------
+                   ADDED LOGOUT BUTTON UNDER PROFILE
+                ------------------------------- -->
+              <div class="sidebar-logout text-center" style="margin-top:10px;">
+                <a href="<?php echo site_url('auth/logout'); ?>" 
+                  class="btn btn-danger btn-sm"
+                  style="border-radius:16px; font-weight:bold; padding: 4px 18px;">
+                  <i class="fa fa-sign-out"></i> Logout
+                </a>
+              </div>
+              <!-- END LOGOUT BUTTON -->
             </div>
             <!-- /menu profile quick info -->
 
@@ -82,51 +104,41 @@
                 <h3>General</h3>
                 <ul class="nav side-menu">
                   <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="<?php echo base_url('index.php/home/'); ?>">Dashboard</a></li>
+                      <li><a href="<?php echo base_url('index.php/booking'); ?>">Pesan Kendaraan</a></li>
+                      <li><a href="<?php echo base_url('index.php/my-bookings'); ?>">List Pesanan</a></li>
+
+                      <li>
+                          <a href="<?php echo base_url('index.php/order/pending_orders'); ?>">Menunggu Persetujuan</a>
+                      </li>
+                      <?php if ($user_session['role'] === 'admin'): ?>
+                      <li>
+                          <a href="<?php echo base_url('index.php/order/order_report'); ?>">Laporan Pesanan</a>
+                      </li>
+                      <?php endif; ?>
+                    </ul>
+                  </li>
+                  <?php if ($user_session['role'] === 'admin'): ?>
+                  <li><a><i class="fa fa-info-circle"></i> Master Data <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
-                    <li><a href="<?php echo base_url('index.php/home/'); ?>">Dashboard</a></li>
-                    <li><a href="<?php echo base_url('index.php/booking'); ?>">Pesan Kendaraan</a></li>
-                    <li><a href="<?php echo base_url('index.php/my-bookings'); ?>">Detail Pesanan</a></li>
-                    <?php if ($user_session['role'] === 'admin'): ?>
-                    <li>
-                        <a href="<?php echo base_url('index.php/order/pending_orders'); ?>">Menunggu Persetujuan</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo base_url('index.php/order/order_report'); ?>">Laporan Pesanan</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo base_url('index.php/users'); ?>">Daftar Pengguna</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo base_url('index.php/drivers'); ?>">Daftar Driver</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo base_url('index.php/vehicles'); ?>">Daftar Kendaraan</a>
-                    </li>
-                    <?php endif; ?>
+                      <li>
+                          <a href="<?php echo base_url('index.php/users'); ?>">Daftar Pengguna</a>
+                      </li>
+                      <li>
+                          <a href="<?php echo base_url('index.php/drivers'); ?>">Daftar Driver</a>
+                      </li>
+                      <li>
+                          <a href="<?php echo base_url('index.php/vehicles'); ?>">Daftar Kendaraan</a>
+                      </li>
                   </ul>
                   </li>
+                  <?php endif; ?>
                 </ul>
               </div>
-              </div>
+            </div>
             
             <!-- /sidebar menu -->
-
-            <!-- /menu footer buttons -->
-            <div class="sidebar-footer hidden-small">
-              <a data-toggle="tooltip" data-placement="top" title="Settings">
-                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-              </a>
-              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-              </a>
-              <a data-toggle="tooltip" data-placement="top" title="Lock">
-                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-              </a>
-              <a data-toggle="tooltip" data-placement="top" title="Logout" href="<?php echo site_url('auth/logout'); ?>">
-                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-              </a>
-            </div>
-            <!-- /menu footer buttons -->
           </div>
         </div>
 

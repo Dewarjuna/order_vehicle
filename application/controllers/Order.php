@@ -76,7 +76,10 @@ class Order extends MY_Controller {
             'keperluan'       => $this->input->post('keperluan'),
             'kendaraan'       => $this->input->post('kendaraan'),
             'jumlah_orang'    => $this->input->post('jumlah_orang'),
-            'pemesan'         => $this->session->userdata('nama')
+            'pemesan'         => $this->session->userdata('nama'),
+            /* 'latitude_tujuan'   => $this->input->post('latitude_tujuan'),
+            'longitude_tujuan'  => $this->input->post('longitude_tujuan'),
+            'jarak'           => $this->input->post('jarak'), */
         ];
 
         $order_id = $this->order_model->create($data);
@@ -208,10 +211,6 @@ class Order extends MY_Controller {
      * - Pre-load all vehicle/driver options for assignment.
      */
     public function pending_orders() {
-        if ($this->user_session['role'] !== 'admin') {
-            show_error('Access denied.');
-            return;
-        }
 
         $this->db->where('status', 'pending');
         $this->db->where('kendaraan IS NULL', null, false);
@@ -444,6 +443,7 @@ public function order_detail_ajax($id) {
     echo '<tr><th>Jumlah Orang</th><td>' . (int)$row->jumlah_orang . '</td></tr>';
     echo '<tr><th>Pemesan</th><td>' . htmlspecialchars($row->pemesan) . '</td></tr>';
     echo '<tr><th>Status</th><td>' . htmlspecialchars($row->status) . '</td></tr>';
+    // echo '<tr><th>Jarak</th><td>' . htmlspecialchars($row->jarak) . ' km</td></tr>'; // Distance commented out
     echo '</table>';
 }
 

@@ -27,7 +27,7 @@ $route['booking/update/(:num)']    = 'order/update/$1';      // Update booking
 
 // If you want to allow direct delete via URL, be careful (security)
 $route['booking/delete/(:num)']    = 'order/delete/$1';
-
+$route['home/ajax_status_tile_counts'] = 'home/ajax_status_tile_counts';
 // Submission (usually POST, but aliased for completeness)
 $route['booking/submit']                  = 'order/submit';
 

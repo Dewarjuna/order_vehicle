@@ -26,6 +26,7 @@
                 <th>ID</th>
                 <th>Pemesan</th>
                 <th>Tanggal Pesanan</th>
+                <th>Waktu Pesanan</th>
                 <th>Tujuan</th>
                 <th>Aksi</th>
               </tr>
@@ -35,21 +36,33 @@
               <tr id="orderRow<?= $order->id ?>">
                 <td><?= htmlspecialchars($order->id) ?></td>
                 <td><?= htmlspecialchars($order->pemesan) ?></td>
-                <td><?= date('d-m-Y', strtotime($order->tanggal_pesanan)) ?></td>
+                <td style='font-weight:bold;'><?= date('d-m-Y', strtotime($order->tanggal_pesanan)) ?></td>
+                <td style='font-weight:bold;'><?= date('H:i', strtotime($order->created_at)) ?></td>
                 <td><?= htmlspecialchars($order->tujuan) ?></td>
                 <td>
                   <button type="button"
                     class="btn btn-info btn-sm"
                     data-toggle="modal"
                     data-target="#modalDetail<?= $order->id ?>">Detail</button>
-                  <button type="button"
-                    class="btn btn-primary btn-sm"
-                    data-toggle="modal"
-                    data-target="#modalApprove<?= $order->id ?>">Approve</button>
-                  <button type="button"
-                    class="btn btn-danger btn-sm"
-                    data-toggle="modal"
-                    data-target="#modalReject<?= $order->id ?>">Reject</button>
+                  <?php if ($this->session->userdata('role') === 'admin'): ?>
+                    <button type="button"
+                      class="btn btn-primary btn-sm"
+                      data-toggle="modal"
+                      data-target="#modalApprove<?= $order->id ?>">Approve</button>
+                    <button type="button"
+                      class="btn btn-danger btn-sm"
+                      data-toggle="modal"
+                      data-target="#modalReject<?= $order->id ?>">Reject</button>
+                  <?php else: ?>
+                    <button type="button"
+                      class="btn btn-primary btn-sm"
+                      style="opacity:0.5; pointer-events:none; cursor:not-allowed;"
+                      disabled>Approve</button>
+                    <button type="button"
+                      class="btn btn-danger btn-sm"
+                      style="opacity:0.5; pointer-events:none; cursor:not-allowed;"
+                      disabled>Reject</button>
+                  <?php endif; ?>
                 </td>
               </tr>
             <?php endforeach; ?>
