@@ -19,8 +19,22 @@
             
             <?php if ($role === 'admin'): ?>
             <div class="row" style="margin-bottom: 15px;">
-                <div class="col-md-6">
-                    <label for="months" style="font-weight:600; margin-bottom:4px;">Filter Bulan <small>(data akan ditampilkan dari Januari sampai bulan yang dipilih)</small></label>
+                <div class="col-md-3">
+                    <label for="year" style="font-weight:600; margin-bottom:4px;">Pilih Tahun</label>
+                    <select id="year" class="form-control select2" style="width:100%;">
+                        <?php
+                        // Show last 5 years up to next year
+                        $start_year = date('Y') - 5;
+                        $end_year = date('Y') + 1;
+                        for ($y = $start_year; $y <= $end_year; $y++) {
+                            $selected = ($y == $current_year) ? 'selected' : '';
+                            echo "<option value=\"$y\" $selected>$y</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="months" style="font-weight:600; margin-bottom:4px;">Pilih Bulan <small>(data akan ditampilkan dari Januari sampai bulan yang dipilih)</small></label>
                     <select id="months" class="form-control select2" style="width:100%;">
                         <?php
                         $months = [
@@ -38,8 +52,7 @@
                             '12' => 'Desember'
                         ];
                         foreach ($months as $num => $name) {
-                            $month_value = $current_year . '-' . $num;
-                            echo "<option value=\"$month_value\">" . $name . " " . $current_year . "</option>";
+                            echo "<option value=\"$num\">$name</option>";
                         }
                         ?>
                     </select>
@@ -206,12 +219,14 @@
 <?php if ($role === 'admin'): ?>
 <script>
 $(document).ready(function() {
-    // Initialize select2 for better UX in month selection
-    $('#months').select2({
-        placeholder: 'Pilih bulan...',
+    // Initialize select2 for better UX in selections
+    $('#year, #months').select2({
         allowClear: false
-    }).val('<?= date('Y-m') ?>').trigger('change'); // Set current month as default
+    });
 
+    // Set current month as default
+    $('#months').val('<?= date('m') ?>').trigger('change');
+    
     // Helper function to handle session expiration
     function handleSessionExpiration(response) {
         if (response && response.code === 'session_expired') {
@@ -233,7 +248,9 @@ $(document).ready(function() {
 
     // Month filter handler: Updates all status tiles counts without page reload
     $('#btn-filter-months').click(function(){
+        var selectedYear = $('#year').val();
         var selectedMonth = $('#months').val();
+        
         if (!selectedMonth) {
             Swal.fire({
                 icon: 'warning',
@@ -243,10 +260,12 @@ $(document).ready(function() {
             return;
         }
 
+        var selectedDate = selectedYear + '-' + selectedMonth;
+        
         $.ajax({
             url: '<?= site_url('home/ajax_status_tile_counts') ?>',
             type: 'POST',
-            data: { months: [selectedMonth] },
+            data: { months: [selectedDate] },
             dataType: 'json',
             success: function(resp) {
                 if (handleSessionExpiration(resp)) return;
@@ -290,7 +309,9 @@ $(document).ready(function() {
     // Status tile click handler
     $('.status-tile').click(function() {
         var status = $(this).data('status');
+        var selectedYear = $('#year').val();
         var selectedMonth = $('#months').val();
+        var selectedDate = selectedYear + '-' + selectedMonth;
         
         // Visual feedback for active tile
         $('.status-tile').removeClass('active');
@@ -305,7 +326,7 @@ $(document).ready(function() {
             type: 'POST',
             data: { 
                 status: status,
-                months: selectedMonth ? [selectedMonth] : []
+                months: selectedDate ? [selectedDate] : []
             },
             dataType: 'json',
             success: function(response) {
@@ -333,13 +354,6 @@ $(document).ready(function() {
             }
         });
     });
-
-    // Auto-trigger status tile click if status parameter exists in URL
-    var urlParams = new URLSearchParams(window.location.search);
-    var status = urlParams.get('status');
-    if (status) {
-        $('.status-tile[data-status="' + status + '"]').click();
-    }
 });
 </script>
 <?php endif; ?>

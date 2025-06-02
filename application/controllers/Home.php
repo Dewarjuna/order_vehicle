@@ -42,9 +42,11 @@ class Home extends MY_Controller {
         $role = $this->session->userdata('role');
         $nama = $this->session->userdata('nama');
         
-        // Get all months of current year up to current month
+        // Get current year and month
         $current_year = date('Y');
         $current_month = date('m');
+        
+        // Create array of months for current year up to current month
         $months = [];
         for ($i = 1; $i <= $current_month; $i++) {
             $months[] = sprintf('%s-%02d', $current_year, $i);
@@ -104,7 +106,7 @@ class Home extends MY_Controller {
         sort($selected_months);
         $last_selected = end($selected_months);
         
-        // Get all months from start of year up to last selected month
+        // Get all months from start of year up to selected month
         $year = substr($last_selected, 0, 4);
         $month = substr($last_selected, 5, 2);
         $months = [];
