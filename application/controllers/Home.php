@@ -70,4 +70,23 @@ class Home extends MY_Controller {
         echo json_encode($results);
     }
 
+    public function ajax_get_orders_table() {
+        if (!$this->input->is_ajax_request()) {
+            show_error('No direct script access allowed', 403);
+            return;
+        }
+
+        $status = $this->input->post('status');
+        if (!$status) {
+            echo '<div class="alert alert-danger">Status tidak valid</div>';
+            return;
+        }
+
+        $data['status_orders'] = $this->order_model->get_orders_by_status($status);
+        $data['selected_status'] = $status;
+        
+        // Load the table view
+        $this->load->view('partials/orders_table', $data);
+    }
+
 }

@@ -56,117 +56,59 @@
               </a>
               
               <!-- Pending Orders -->
-              <a href="<?= site_url('home?status=pending') ?>" class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12" style="text-decoration: none;">
-                <div class="tile-stats" style="background: #fff; border-left: 5px solid #F39C12;">
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats status-tile" data-status="pending" style="background: #fff; border-left: 5px solid #F39C12; cursor: pointer;">
                   <div class="icon" style="color: #F39C12;"><i class="fa fa-hourglass-half"></i></div>
                   <div class="count" id="count-pending-orders" style="color: #333;"><?= $pending_orders ?></div>
                   <h3 style="color: #333;">Pending</h3>
                   <p style="color: #73879C;">Menunggu persetujuan</p>
                 </div>
-              </a>
+              </div>
               
               <!-- Approved Orders -->
-              <a href="<?= site_url('home?status=approved') ?>" class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12" style="text-decoration: none;">
-                <div class="tile-stats" style="background: #fff; border-left: 5px solid #3498DB;">
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats status-tile" data-status="approved" style="background: #fff; border-left: 5px solid #3498DB; cursor: pointer;">
                   <div class="icon" style="color: #3498DB;"><i class="fa fa-check-circle"></i></div>
                   <div class="count" id="count-approved-orders" style="color: #333;"><?= $approved_orders ?></div>
                   <h3 style="color: #333;">Approved</h3>
                   <p style="color: #73879C;">Disetujui</p>
                 </div>
-              </a>
+              </div>
               
               <!-- Done Orders -->
-              <a href="<?= site_url('home?status=done') ?>" class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12" style="text-decoration: none;">
-                <div class="tile-stats" style="background: #fff; border-left: 5px solid #26B99A;">
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats status-tile" data-status="done" style="background: #fff; border-left: 5px solid #26B99A; cursor: pointer;">
                   <div class="icon" style="color: #26B99A;"><i class="fa fa-flag-checkered"></i></div>
                   <div class="count" id="count-done-orders" style="color: #333;"><?= $done_orders ?></div>
                   <h3 style="color: #333;">Done</h3>
                   <p style="color: #73879C;">Pesanan selesai</p>
                 </div>
-              </a>
+              </div>
               
               <!-- Rejected Orders -->
-              <a href="<?= site_url('home?status=rejected') ?>" class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12" style="text-decoration: none;">
-                <div class="tile-stats" style="background: #fff; border-left: 5px solid #E74C3C;">
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats status-tile" data-status="rejected" style="background: #fff; border-left: 5px solid #E74C3C; cursor: pointer;">
                   <div class="icon" style="color: #E74C3C;"><i class="fa fa-times-circle"></i></div>
                   <div class="count" id="count-rejected-orders" style="color: #333;"><?= $rejected_orders ?></div>
                   <h3 style="color: #333;">Rejected</h3>
                   <p style="color: #73879C;">Pesanan ditolak</p>
                 </div>
-              </a>
+              </div>
               
               <!-- No Confirmation -->
-              <a href="<?= site_url('home?status=no confirmation') ?>" class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12" style="text-decoration: none;">
-                <div class="tile-stats" style="background: #fff; border-left: 5px solid #95A5A6;">
+              <div class="animated flipInY col-lg-2 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats status-tile" data-status="no confirmation" style="background: #fff; border-left: 5px solid #95A5A6; cursor: pointer;">
                   <div class="icon" style="color: #95A5A6;"><i class="fa fa-question-circle"></i></div>
                   <div class="count" id="count-no-confirmation-orders" style="color: #333;"><?= $no_confirmation_orders ?></div>
                   <h3 style="color: #333;">No Confirmation</h3>
                   <p style="color: #73879C;">Tidak ada konfirmasi</p>
                 </div>
-              </a>
+              </div>
               
             </div>
 
             <!-- Orders Table Section -->
-            <?php if (isset($status_orders)): ?>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="x_panel">
-                  <div class="x_title">
-                    <h2><i class="fa fa-table"></i> Daftar Pesanan - <?= ucfirst($selected_status) ?></h2>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="x_content">
-                    <div class="table-responsive">
-                      <table class="table table-striped jambo_table">
-                        <thead>
-                          <tr>
-                            <th>Tanggal Pesan</th>
-                            <th>Pemesan</th>
-                            <th>Tujuan</th>
-                            <th>Tanggal Pakai</th>
-                            <th>Kendaraan</th>
-                            <th>Driver</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php foreach ($status_orders as $order): ?>
-                          <tr>
-                            <td><?= date('d-m-Y', strtotime($order->tanggal_pesanan)) ?></td>
-                            <td><?= htmlspecialchars($order->pemesan) ?></td>
-                            <td><?= htmlspecialchars($order->tujuan) ?></td>
-                            <td><?= date('d-m-Y', strtotime($order->tanggal_pakai)) ?></td>
-                            <td>
-                              <?= $order->no_pol ? $order->no_pol . ' (' . $order->nama_kendaraan . ')' : '-' ?>
-                            </td>
-                            <td><?= $order->nama_driver ?: '-' ?></td>
-                            <td>
-                              <?php 
-                                $status = $order->status;
-                                $badge_class = [
-                                  'pending' => 'warning',
-                                  'approved' => 'primary',
-                                  'done' => 'success',
-                                  'rejected' => 'danger',
-                                  'no confirmation' => 'default'
-                                ];
-                                $badge_class = isset($badge_class[$status]) ? $badge_class[$status] : 'default';
-                              ?>
-                              <span class="label label-<?= $badge_class ?>">
-                                <?= ucfirst($status) ?>
-                              </span>
-                            </td>
-                          </tr>
-                          <?php endforeach; ?>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <?php endif; ?>
+            <div id="orders-table-container"></div>
 
             <?php else: ?>
             <!-- User Dashboard -->
@@ -247,6 +189,10 @@
   .animated.flipInY:nth-child(4) { animation-delay: 0.4s; }
   .animated.flipInY:nth-child(5) { animation-delay: 0.5s; }
   .animated.flipInY:nth-child(6) { animation-delay: 0.6s; }
+
+  .status-tile.active {
+    background: #f8f9fa !important;
+  }
 </style>
 <?php $this->load->view('header_footer/footer'); ?>
 <?php if ($role === 'admin'): ?>
@@ -256,6 +202,8 @@ $(document).ready(function() {
         placeholder: 'Pilih bulan...',
         allowClear: true
     });
+
+    // Handle month filter
     $('#btn-filter-months').click(function(){
         var months = $('#months').val();
         console.log('Selected months:', months);
@@ -283,6 +231,38 @@ $(document).ready(function() {
           }
         });
     });
+
+    // Handle status tile clicks
+    $('.status-tile').click(function() {
+        var status = $(this).data('status');
+        
+        // Remove active class from all tiles and add to clicked one
+        $('.status-tile').removeClass('active');
+        $(this).addClass('active');
+        
+        // Show loading indicator
+        $('#orders-table-container').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-3x"></i></div>');
+        
+        // Load orders table via AJAX
+        $.ajax({
+            url: '<?= site_url('home/ajax_get_orders_table') ?>',
+            type: 'POST',
+            data: { status: status },
+            success: function(response) {
+                $('#orders-table-container').html(response);
+            },
+            error: function() {
+                $('#orders-table-container').html('<div class="alert alert-danger">Gagal memuat data</div>');
+            }
+        });
+    });
+
+    // Check URL for status parameter and trigger click if present
+    var urlParams = new URLSearchParams(window.location.search);
+    var status = urlParams.get('status');
+    if (status) {
+        $('.status-tile[data-status="' + status + '"]').click();
+    }
 });
 </script>
 <?php endif; ?>

@@ -255,8 +255,9 @@ class Order_model extends CI_Model {
         $this->db->where('id', $id);
         return $this->db->update($this->table_pesanan, $data);
     }
-
-    // Add this method to your Order_model class
+    /**
+     * Get all orders by status with related kendaraan and driver info.
+     */
 public function get_orders_by_status($status) {
     $this->db->select('p.*, k.no_pol, k.nama_kendaraan, d.nama as nama_driver')
         ->from('PK_pesanan p')
