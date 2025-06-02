@@ -77,12 +77,22 @@ class Home extends MY_Controller {
         }
 
         $status = $this->input->post('status');
+        $months = $this->input->post('months');
+        
         if (!$status) {
             echo '<div class="alert alert-danger">Status tidak valid</div>';
             return;
         }
 
-        $data['status_orders'] = $this->order_model->get_orders_by_status($status);
+        // If months are selected, use them for filtering
+        if (!empty($months) && is_array($months)) {
+            $data['status_orders'] = $this->order_model->get_orders_by_status_and_months($status, $months);
+        } else {
+            // If no months selected, get current month's orders
+            $current_month = date('Y-m');
+            $data['status_orders'] = $this->order_model->get_orders_by_status_and_months($status, [$current_month]);
+        }
+        
         $data['selected_status'] = $status;
         
         // Load the table view

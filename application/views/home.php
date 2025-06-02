@@ -235,6 +235,7 @@ $(document).ready(function() {
     // Handle status tile clicks
     $('.status-tile').click(function() {
         var status = $(this).data('status');
+        var months = $('#months').val() || [];
         
         // Remove active class from all tiles and add to clicked one
         $('.status-tile').removeClass('active');
@@ -247,7 +248,10 @@ $(document).ready(function() {
         $.ajax({
             url: '<?= site_url('home/ajax_get_orders_table') ?>',
             type: 'POST',
-            data: { status: status },
+            data: { 
+                status: status,
+                months: months
+            },
             success: function(response) {
                 $('#orders-table-container').html(response);
             },

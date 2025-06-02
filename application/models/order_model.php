@@ -267,4 +267,18 @@ public function get_orders_by_status($status) {
         ->order_by('p.tanggal_pakai', 'DESC');
     return $this->db->get()->result();
 }
+
+    public function get_orders_by_status_and_months($status, $months = []) {
+        $this->db->select('p.*, k.no_pol, k.nama_kendaraan, d.nama as nama_driver')
+            ->from('PK_pesanan p')
+            ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
+            ->join('PK_driver d', 'p.driver = d.id', 'left')
+            ->where('p.status', $status);
+        
+        if (!empty($months)) {
+            $this->db->where_in("LEFT(p.tanggal_pesanan, 7)", $months);
+        }
+        
+        return $this->db->get()->result();
+    }
 }
