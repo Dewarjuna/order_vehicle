@@ -113,11 +113,26 @@ class Home extends MY_Controller {
             return;
         }
 
+        // Check session first
+        if (!$this->session->userdata('user_id')) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'error',
+                'code' => 'session_expired',
+                'message' => 'Your session has expired. Please refresh the page to log in again.'
+            ]);
+            return;
+        }
+
         $status = $this->input->post('status');
         $months = $this->input->post('months');
         
         if (!$status) {
-            echo '<div class="alert alert-danger">Status tidak valid</div>';
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Status tidak valid'
+            ]);
             return;
         }
 

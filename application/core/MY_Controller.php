@@ -77,9 +77,22 @@ class MY_Controller extends CI_Controller
          * 2. Prevents accidentally forgetting auth checks in controllers
          * 3. Makes it easy to modify auth logic for the entire application
          * 4. Provides consistent redirect behavior for unauthenticated users
+         * 5. Handles AJAX requests differently to prevent UI glitches
          */
         if (empty($this->user_session['user_id']) && $controller != 'auth') {
             $this->session->set_flashdata('session_expired', 'Your session has expired due to inactivity. Please log in again.');
+            
+            // Handle AJAX requests differently
+            if ($this->input->is_ajax_request()) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'status' => 'error',
+                    'code' => 'session_expired',
+                    'message' => 'Your session has expired. Please refresh the page to log in again.'
+                ]);
+                exit;
+            }
+            
             redirect('auth');
         }
     }

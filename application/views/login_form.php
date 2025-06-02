@@ -65,7 +65,10 @@
     <!-- SweetAlert2 JS -->
     <script src="<?php echo base_url('assets/vendors/sweetalert2/dist/sweetalert2.all.min.js'); ?>"></script>
     <script>
-      // Show SweetAlert2 for session expired
+      // Enhanced error feedback using SweetAlert2 instead of browser alerts
+      // Provides better UX with consistent styling and clear error categorization
+
+      // Session timeout notification - helps users understand why they need to login again
       <?php if ($this->session->flashdata('session_expired')): ?>
         Swal.fire({
           icon: 'warning',
@@ -74,7 +77,7 @@
         });
       <?php endif; ?>
 
-      // Show SweetAlert2 for CodeIgniter validation errors
+      // Form validation errors - consolidates multiple errors into one clean message
       <?php if(validation_errors()): 
         $validation = trim(preg_replace('/\s+/', ' ', strip_tags(validation_errors())));
       ?>
@@ -85,7 +88,7 @@
         });
       <?php endif; ?>
 
-      // Show SweetAlert2 for custom error
+      // Authentication errors - clearly distinguishes auth failures from validation issues
       <?php if (isset($error)): ?>
         Swal.fire({
           icon: 'error',

@@ -183,12 +183,13 @@
     color: rgba(255,255,255,0.8);
   }
   
-  .animated.flipInY:nth-child(1) { animation-delay: 0.1s; }
-  .animated.flipInY:nth-child(2) { animation-delay: 0.2s; }
-  .animated.flipInY:nth-child(3) { animation-delay: 0.3s; }
-  .animated.flipInY:nth-child(4) { animation-delay: 0.4s; }
-  .animated.flipInY:nth-child(5) { animation-delay: 0.5s; }
-  .animated.flipInY:nth-child(6) { animation-delay: 0.6s; }
+  /* Animation delays for each tile */
+  .animated.flipInY:nth-child(1) { animation-delay: 0.1s; animation-duration: 0.8s; }
+  .animated.flipInY:nth-child(2) { animation-delay: 0.2s; animation-duration: 0.8s; }
+  .animated.flipInY:nth-child(3) { animation-delay: 0.3s; animation-duration: 0.8s; }
+  .animated.flipInY:nth-child(4) { animation-delay: 0.4s; animation-duration: 0.8s; }
+  .animated.flipInY:nth-child(5) { animation-delay: 0.5s; animation-duration: 0.8s; }
+  .animated.flipInY:nth-child(6) { animation-delay: 0.6s; animation-duration: 0.8s; }
 
   .status-tile.active {
     background: #f8f9fa !important;
@@ -198,12 +199,33 @@
 <?php if ($role === 'admin'): ?>
 <script>
 $(document).ready(function() {
+    // Initialize select2 for better UX in month selection
     $('#months').select2({
         placeholder: 'Pilih bulan...',
         allowClear: true
     });
 
-    // Handle month filter
+    // Helper function to handle session expiration
+    function handleSessionExpiration(response) {
+        if (response && response.code === 'session_expired') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Session Expired',
+                text: response.message,
+                allowOutsideClick: false,
+                confirmButtonText: 'Login Again'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '<?= site_url('auth') ?>';
+                }
+            });
+            return true;
+        }
+        return false;
+    }
+
+    // Month filter handler: Updates all status tiles counts without page reload
+    // This improves performance by only fetching the counts, not the full data
     $('#btn-filter-months').click(function(){
         var months = $('#months').val();
         console.log('Selected months:', months);
@@ -212,39 +234,47 @@ $(document).ready(function() {
             return;
         }
         $.ajax({
-          url: '<?= site_url('home/ajax_status_tile_counts') ?>',
-          type: 'POST',
-          data: { months: months },
-          dataType: 'json',
-          success: function(resp) {
-            if(resp && typeof resp === 'object'){
-              $('#count-total-orders').text(resp.total_orders);
-              $('#count-pending-orders').text(resp.pending_orders);
-              $('#count-approved-orders').text(resp.approved_orders);
-              $('#count-done-orders').text(resp.done_orders);
-              $('#count-rejected-orders').text(resp.rejected_orders);
-              $('#count-no-confirmation-orders').text(resp.no_confirmation_orders);
+            url: '<?= site_url('home/ajax_status_tile_counts') ?>',
+            type: 'POST',
+            data: { months: months },
+            dataType: 'json',
+            success: function(resp) {
+                if (handleSessionExpiration(resp)) return;
+                
+                if(resp && typeof resp === 'object'){
+                    // Update all tiles at once to maintain visual consistency
+                    $('#count-total-orders').text(resp.total_orders);
+                    $('#count-pending-orders').text(resp.pending_orders);
+                    $('#count-approved-orders').text(resp.approved_orders);
+                    $('#count-done-orders').text(resp.done_orders);
+                    $('#count-rejected-orders').text(resp.rejected_orders);
+                    $('#count-no-confirmation-orders').text(resp.no_confirmation_orders);
+                }
+            },
+            error: function(xhr) {
+                try {
+                    var resp = JSON.parse(xhr.responseText);
+                    if (handleSessionExpiration(resp)) return;
+                } catch(e) {}
+                alert('Gagal memuat data');
             }
-          },
-          error: function() {
-            alert('Gagal memuat data');
-          }
         });
     });
 
-    // Handle status tile clicks
+    // Status tile click handler: Shows filtered orders table
+    // Uses AJAX to avoid full page reloads and maintain filter state
     $('.status-tile').click(function() {
         var status = $(this).data('status');
         var months = $('#months').val() || [];
         
-        // Remove active class from all tiles and add to clicked one
+        // Visual feedback for active tile
         $('.status-tile').removeClass('active');
         $(this).addClass('active');
         
-        // Show loading indicator
+        // Show loading state while fetching data
         $('#orders-table-container').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-3x"></i></div>');
         
-        // Load orders table via AJAX
+        // Load filtered orders table
         $.ajax({
             url: '<?= site_url('home/ajax_get_orders_table') ?>',
             type: 'POST',
@@ -252,16 +282,34 @@ $(document).ready(function() {
                 status: status,
                 months: months
             },
+            dataType: 'json',
             success: function(response) {
+                if (handleSessionExpiration(response)) {
+                    return;
+                }
+                
+                if (response.status === 'error') {
+                    $('#orders-table-container').html('<div class="alert alert-danger">' + response.message + '</div>');
+                    return;
+                }
+                
                 $('#orders-table-container').html(response);
             },
-            error: function() {
-                $('#orders-table-container').html('<div class="alert alert-danger">Gagal memuat data</div>');
+            error: function(xhr) {
+                try {
+                    var response = JSON.parse(xhr.responseText);
+                    if (handleSessionExpiration(response)) {
+                        return;
+                    }
+                    $('#orders-table-container').html('<div class="alert alert-danger">' + response.message + '</div>');
+                } catch(e) {
+                    $('#orders-table-container').html(xhr.responseText);
+                }
             }
         });
     });
 
-    // Check URL for status parameter and trigger click if present
+    // Auto-trigger status tile click if status parameter exists in URL
     var urlParams = new URLSearchParams(window.location.search);
     var status = urlParams.get('status');
     if (status) {

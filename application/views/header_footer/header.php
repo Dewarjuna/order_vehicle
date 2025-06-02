@@ -12,6 +12,8 @@
     <link href="<?php echo base_url('assets/vendors/bootstrap/dist/css/bootstrap.min.css'); ?>" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="<?php echo base_url('assets/vendors/font-awesome/css/font-awesome.min.css'); ?>" rel="stylesheet">
+    <!-- Animate.css -->
+    <link href="<?php echo base_url('assets/vendors/animate.css/animate.css'); ?>" rel="stylesheet">
     <!-- NProgress -->
     <link href="<?php echo base_url('assets/vendors/nprogress/nprogress.css'); ?>" rel="stylesheet">
     <!-- iCheck -->
@@ -103,22 +105,14 @@
               <div class="menu_section">
                 <h3>General</h3>
                 <ul class="nav side-menu">
-                  <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="<?php echo base_url('index.php/home/'); ?>">Dashboard</a></li>
-                      <li><a href="<?php echo base_url('index.php/booking'); ?>">Pesan Kendaraan</a></li>
-                      <li><a href="<?php echo base_url('index.php/my-bookings'); ?>">List Pesanan</a></li>
-
-                      <li>
-                          <a href="<?php echo base_url('index.php/order/pending_orders'); ?>">Menunggu Persetujuan</a>
-                      </li>
-                      <?php if ($user_session['role'] === 'admin'): ?>
-                      <li>
-                          <a href="<?php echo base_url('index.php/order/order_report'); ?>">Laporan Pesanan</a>
-                      </li>
-                      <?php endif; ?>
-                    </ul>
-                  </li>
+                  <li><a href="<?php echo base_url('index.php/home/'); ?>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                  <li><a href="<?php echo base_url('index.php/booking'); ?>"><i class="fa fa-car"></i> Pesan Kendaraan</a></li>
+                  <li><a href="<?php echo base_url('index.php/my-bookings'); ?>"><i class="fa fa-list"></i> List Pesanan</a></li>
+                  <li><a href="<?php echo base_url('index.php/order/pending_orders'); ?>"><i class="fa fa-clock-o"></i> Menunggu Persetujuan</a></li>
+                  <?php if ($user_session['role'] === 'admin'): ?>
+                  <li><a href="<?php echo base_url('index.php/order/order_report'); ?>"><i class="fa fa-file-text"></i> Laporan Pesanan</a></li>
+                  <?php endif; ?>
+                  
                   <?php if ($user_session['role'] === 'admin'): ?>
                   <li><a><i class="fa fa-info-circle"></i> Master Data <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">

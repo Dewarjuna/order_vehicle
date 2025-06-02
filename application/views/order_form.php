@@ -304,179 +304,56 @@
 <?php $this->load->view('header_footer/footer'); ?>
 
 <script>
-
 $(function() {
+    // Date/time pickers with smart constraints to prevent invalid selections
     var today = moment().startOf('day');
     $('#tanggal_pakai_group').datetimepicker({
         format: 'DD-MM-YYYY',
-        minDate: today,
+        minDate: today,  // Prevent selecting past dates
         allowInputToggle: true
     });
 
+    // Time pickers with dependency logic
     $('#waktu_mulai_group').datetimepicker({
         format: 'HH:mm'
     });
 
     $('#waktu_selesai_group').datetimepicker({
         format: 'HH:mm',
-        useCurrent: false
+        useCurrent: false  // Prevent auto-selecting current time
     });
 
+    // Enforce valid time ranges - end time must be after start time
     $('#waktu_mulai_group').on("dp.change", function(e) {
         $('#waktu_selesai_group').data("DateTimePicker").minDate(e.date);
     });
-
     $('#waktu_selesai_group').on("dp.change", function(e) {
         $('#waktu_mulai_group').data("DateTimePicker").maxDate(e.date);
     });
 
+    // Enhanced employee selection with grouped options
     $('.select2_group').select2({
         placeholder: "Pilih Nomor Karyawan...",
         allowClear: true,
     });
 
+    // Auto-fill employee details to prevent data inconsistency
     $('.select2_group').on('change', function() {
         var selected = $(this).find('option:selected');
         $('#nama').val(selected.data('nama'));
         $('#divisi').val(selected.data('divisi'));
     });
 
+    // Initial form population if employee is pre-selected
     $('.select2_group').trigger('change');
 
-
-    // --- IMPORTANT: This block is to use OpenRouteService ---
-// $('#cariKoordinat').on('click', function(e) {
-//     e.preventDefault();
-//     e.stopPropagation();
-//     e.stopImmediatePropagation();
-//     $('#demo-form2').parsley().reset();
-//     $('#tanggal_pakai').blur(); 
-
-//     var tujuan = $('#tujuan').val();
-//     if (!tujuan) {
-//         alert('Silakan masukkan tujuan terlebih dahulu');
-//         return;
-//     }
-
-//     $('#cariKoordinat').html('<i class="fa fa-spinner fa-spin"></i> Mencari...');
-
-//     // 1. Geocode the tujuan (address) to coordinates using Nominatim API
-//     $.getJSON('https://nominatim.openstreetmap.org/search', {
-//         q: tujuan + ', Indonesia',
-//         format: 'json',
-//         limit: 1,
-//         addressdetails: 1
-//     }, function(data) {
-//         if (data && data.length > 0) {
-//             var lat_tujuan = parseFloat(data[0].lat);
-//             var lon_tujuan = parseFloat(data[0].lon);
-//             $('#latitude_tujuan').val(lat_tujuan);
-//             $('#longitude_tujuan').val(lon_tujuan);
-
-//             // 2. Get the kantor (office) coords (fixed)
-//             var lat_kantor = parseFloat($('#latitude_kantor').val());
-//             var lon_kantor = parseFloat($('#longitude_kantor').val());
-
-//             // 3. Call OpenRouteService for DRIVING ROUTE distance
-//             getORSRouteDistance(lat_kantor, lon_kantor, lat_tujuan, lon_tujuan, function(distanceKm, durationMinutes, summary){
-//                 $('#cariKoordinat').html('<i class="fa fa-map-marker"></i> Dapatkan Koordinat');
-//                 if(distanceKm && !isNaN(distanceKm)) {
-//                     $('#jarak').val(distanceKm.toFixed(2));
-//                     alert("Koordinat ditemukan untuk: " + data[0].display_name.split(',')[0] +
-//                           "\nJarak melalui jalan: " + distanceKm.toFixed(2) + " km" +
-//                           "\nEstimasi waktu: " + durationMinutes.toFixed(1) + " menit");
-//                 } else {
-//                     alert("API OpenRouteService gagal atau tidak ditemukan rute!");
-//                     $('#jarak').val('');
-//                 }
-//             });
-
-//         } else {
-//             $('#cariKoordinat').html('<i class="fa fa-map-marker"></i> Dapatkan Koordinat');
-//             alert('Alamat tidak ditemukan. Mohon periksa kembali penulisan alamat tujuan.');
-//         }
-//     }).fail(function() {
-//         $('#cariKoordinat').html('<i class="fa fa-map-marker"></i> Dapatkan Koordinat');
-//         alert('Gagal menghubungi server. Silakan coba lagi.');
-//     });
-// });
-
-// $('#hitungJarak').click(function(e) {
-//     e.preventDefault();
-//     e.stopPropagation();
-//     e.stopImmediatePropagation();
-//     $('#demo-form2').parsley().reset();
-//     $('#tanggal_pakai').blur(); // Trigger validation 
-//     var lat_kantor = parseFloat($('#latitude_kantor').val());
-//     var lon_kantor = parseFloat($('#longitude_kantor').val());
-//     var lat_tujuan = parseFloat($('#latitude_tujuan').val());
-//     var lon_tujuan = parseFloat($('#longitude_tujuan').val());
-//     if (isNaN(lat_tujuan) || isNaN(lon_tujuan)) {
-//         alert('Koordinat tujuan belum ada. Silakan dapatkan koordinat tujuan terlebih dahulu.');
-//         return;
-//     }
-//     getORSRouteDistance(lat_kantor, lon_kantor, lat_tujuan, lon_tujuan, function(distanceKm, durationMinutes, summary){
-//         if(distanceKm && !isNaN(distanceKm)) {
-//             $('#jarak').val(distanceKm.toFixed(2));
-//             alert("Jarak melalui jalan: " + distanceKm.toFixed(2) + " km\n" +
-//                   "Estimasi waktu: " + durationMinutes.toFixed(1) + " menit");
-//         } else {
-//             alert("API OpenRouteService gagal atau tidak ditemukan rute!");
-//             $('#jarak').val('');
-//         }
-//     });
-// });
-
-/**
-//  * Calculates the real driving distance and estimated duration
-//  * between two coordinates using OpenRouteService's API.
-//  * @param {float} lat1 - Origin latitude (example: -6.2170)
-//  * @param {float} lon1 - Origin longitude (example: 106.9720)
-//  * @param {float} lat2 - Destination latitude
-//  * @param {float} lon2 - Destination longitude
-//  * @param {function} onResult - Callback: receives (distanceKm, durationMinutes, summary)
-//  * 
-//  * Requires you to place your API key in the variable below.
-//  */
-// function getORSRouteDistance(lat1, lon1, lat2, lon2, onResult) {
-//   var apiKey = '5b3ce3597851110001cf62482348c39f38254f039c7570ccaa113e18'; // <-- PUT YOUR API KEY HERE!
-//   var url = 'https://api.openrouteservice.org/v2/directions/driving-car/geojson';
-
-//   var data = {
-//     coordinates: [
-//       [lon1, lat1], // [lng, lat]
-//       [lon2, lat2]
-//     ]
-//   };
-
-//   fetch(url, {
-//     method: 'POST',
-//     headers: {
-//       'Authorization': apiKey,
-//       'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify(data)
-//   })
-//   .then(response => response.json())
-//   .then(result => {
-//       if (
-//         result &&
-//         result.features &&
-//         result.features.length > 0 &&
-//         result.features[0].properties &&
-//         result.features[0].properties.summary
-//       ) {
-//         var summary = result.features[0].properties.summary;
-//         var distanceKm = summary.distance / 1000.0;
-//         var durationMinutes = summary.duration / 60.0;
-//         if(onResult) onResult(distanceKm, durationMinutes, summary);
-//       } else {
-//         if(onResult) onResult(null, null, null);
-//       }
-//   })
-//   .catch(error => { 
-//     if(onResult) onResult(null, null, null);
-//   });
+    /* Commented out OpenRouteService integration for future use
+    This section would handle:
+    - Address to coordinate conversion
+    - Distance calculation between office and destination
+    - Route duration estimation
+    
+    Removed to simplify the current implementation but kept for reference
+    when route planning features are needed */
 })
 </script>
