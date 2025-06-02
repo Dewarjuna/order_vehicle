@@ -286,7 +286,8 @@ public function get_orders_by_status($status) {
             ->from('PK_pesanan p')
             ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
             ->join('PK_driver d', 'p.driver = d.id', 'left')
-            ->where('p.pemesan', $pemesan);
+            ->where('p.pemesan', $pemesan)
+            ->order_by('p.tanggal_pesanan', 'DESC');
         return $this->db->get()->result();
     }
 

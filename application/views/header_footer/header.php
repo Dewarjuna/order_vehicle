@@ -67,7 +67,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="<?php echo base_url('index.php/home'); ?>" class="site_title"><i class="fa fa-car"></i> <span style="font-size: 21px;">Pesan Kendaraan</span></a>
+              <a href="<?php echo base_url('home'); ?>" class="site_title"><i class="fa fa-car"></i> <span style="font-size: 21px;">Pesan Kendaraan</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -105,25 +105,25 @@
               <div class="menu_section">
                 <h3>General</h3>
                 <ul class="nav side-menu">
-                  <li><a href="<?php echo base_url('index.php/home/'); ?>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-                  <li><a href="<?php echo base_url('index.php/booking'); ?>"><i class="fa fa-car"></i> Pesan Kendaraan</a></li>
-                  <li><a href="<?php echo base_url('index.php/my-bookings'); ?>"><i class="fa fa-list"></i> List Pesanan</a></li>
-                  <li><a href="<?php echo base_url('index.php/order/pending_orders'); ?>"><i class="fa fa-clock-o"></i> Menunggu Persetujuan</a></li>
+                  <li><a href="<?php echo base_url('home/'); ?>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                  <li><a href="<?php echo base_url('booking'); ?>"><i class="fa fa-car"></i> Pesan Kendaraan</a></li>
+                  <li><a href="<?php echo base_url('my-bookings'); ?>"><i class="fa fa-list"></i> List Pesanan</a></li>
+                  <li><a href="<?php echo base_url('order/pending_orders'); ?>"><i class="fa fa-clock-o"></i> Menunggu Persetujuan</a></li>
                   <?php if ($user_session['role'] === 'admin'): ?>
-                  <li><a href="<?php echo base_url('index.php/order/order_report'); ?>"><i class="fa fa-file-text"></i> Laporan Pesanan</a></li>
+                  <li><a href="<?php echo base_url('order/order_report'); ?>"><i class="fa fa-file-text"></i> Laporan Pesanan</a></li>
                   <?php endif; ?>
                   
                   <?php if ($user_session['role'] === 'admin'): ?>
                   <li><a><i class="fa fa-info-circle"></i> Master Data <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
                       <li>
-                          <a href="<?php echo base_url('index.php/users'); ?>">Daftar Pengguna</a>
+                          <a href="<?php echo base_url('users'); ?>">Daftar Pengguna</a>
                       </li>
                       <li>
-                          <a href="<?php echo base_url('index.php/drivers'); ?>">Daftar Driver</a>
+                          <a href="<?php echo base_url('drivers'); ?>">Daftar Driver</a>
                       </li>
                       <li>
-                          <a href="<?php echo base_url('index.php/vehicles'); ?>">Daftar Kendaraan</a>
+                          <a href="<?php echo base_url('vehicles'); ?>">Daftar Kendaraan</a>
                       </li>
                   </ul>
                   </li>

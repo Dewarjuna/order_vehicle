@@ -41,29 +41,37 @@ class Home extends MY_Controller {
         
         $role = $this->session->userdata('role');
         $nama = $this->session->userdata('nama');
-        $now = date('Y-m');
+        
+        // Get all months of current year up to current month
+        $current_year = date('Y');
+        $current_month = date('m');
+        $months = [];
+        for ($i = 1; $i <= $current_month; $i++) {
+            $months[] = sprintf('%s-%02d', $current_year, $i);
+        }
 
         if ($role === 'admin') {
-            $data['total_orders']    = $this->order_model->count_orders_by_month($now);
-            $data['pending_orders']  = $this->order_model->count_orders_by_month_status($now, 'pending');
-            $data['approved_orders'] = $this->order_model->count_orders_by_month_status($now, 'approved');
-            $data['done_orders']     = $this->order_model->count_orders_by_month_status($now, 'done');
-            $data['rejected_orders'] = $this->order_model->count_orders_by_month_status($now, 'rejected');
-            $data['no_confirmation_orders'] = $this->order_model->count_orders_by_month_status($now, 'no confirmation');
+            $data['total_orders']    = $this->order_model->count_orders_by_months($months);
+            $data['pending_orders']  = $this->order_model->count_orders_by_months_status($months, 'pending');
+            $data['approved_orders'] = $this->order_model->count_orders_by_months_status($months, 'approved');
+            $data['done_orders']     = $this->order_model->count_orders_by_months_status($months, 'done');
+            $data['rejected_orders'] = $this->order_model->count_orders_by_months_status($months, 'rejected');
+            $data['no_confirmation_orders'] = $this->order_model->count_orders_by_months_status($months, 'no confirmation');
             
             // Get status from URL parameter if exists
             $status = $this->input->get('status');
             if ($status) {
-                $data['status_orders'] = $this->order_model->get_orders_by_status($status);
+                $data['status_orders'] = $this->order_model->get_orders_by_status_and_months($status, $months);
                 $data['selected_status'] = $status;
             }
         } else {
-            $data['user_orders'] = $this->order_model->count_user_orders_by_month($now, $nama);
+            $data['user_orders'] = $this->order_model->count_user_orders_by_month($current_month, $nama);
         }
 
         $data['username'] = $this->session->userdata('username');
         $data['nama']     = $nama;
         $data['role']     = $role;
+        $data['current_year'] = $current_year;
 
         $this->load->view('home', $data);
     }
@@ -82,17 +90,41 @@ class Home extends MY_Controller {
             return;
         }
 
-        $months = $this->input->post('months');
-        if (!is_array($months)) $months = [];
-        $results =array(
-            'total_orders' => $this->order_model->count_orders_by_months($months),
-            'pending_orders' => $this->order_model->count_orders_by_months_status($months, 'pending'),
-            'approved_orders' => $this->order_model->count_orders_by_months_status($months, 'approved'),
-            'done_orders' => $this->order_model->count_orders_by_months_status($months, 'done'),
-            'rejected_orders' => $this->order_model->count_orders_by_months_status($months, 'rejected'),
-            'no_confirmation_orders' => $this->order_model->count_orders_by_months_status($months, 'no confirmation')
+        $selected_months = $this->input->post('months');
+        if (!is_array($selected_months) || empty($selected_months)) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Please select at least one month'
+            ]);
+            return;
+        }
+
+        // Sort months chronologically
+        sort($selected_months);
+        $last_selected = end($selected_months);
+        
+        // Get all months from start of year up to last selected month
+        $year = substr($last_selected, 0, 4);
+        $month = substr($last_selected, 5, 2);
+        $months = [];
+        for ($i = 1; $i <= intval($month); $i++) {
+            $months[] = sprintf('%s-%02d', $year, $i);
+        }
+
+        $results = array(
+            'status' => 'success',
+            'data' => array(
+                'total_orders' => $this->order_model->count_orders_by_months($months),
+                'pending_orders' => $this->order_model->count_orders_by_months_status($months, 'pending'),
+                'approved_orders' => $this->order_model->count_orders_by_months_status($months, 'approved'),
+                'done_orders' => $this->order_model->count_orders_by_months_status($months, 'done'),
+                'rejected_orders' => $this->order_model->count_orders_by_months_status($months, 'rejected'),
+                'no_confirmation_orders' => $this->order_model->count_orders_by_months_status($months, 'no confirmation')
+            )
         );
 
+        header('Content-Type: application/json');
         echo json_encode($results);
     }
 
@@ -125,7 +157,7 @@ class Home extends MY_Controller {
         }
 
         $status = $this->input->post('status');
-        $months = $this->input->post('months');
+        $selected_months = $this->input->post('months');
         
         if (!$status) {
             header('Content-Type: application/json');
@@ -136,15 +168,27 @@ class Home extends MY_Controller {
             return;
         }
 
-        // If months are selected, use them for filtering
-        if (!empty($months) && is_array($months)) {
-            $data['status_orders'] = $this->order_model->get_orders_by_status_and_months($status, $months);
+        // If months are selected, get all months up to the last selected month
+        if (!empty($selected_months) && is_array($selected_months)) {
+            sort($selected_months);
+            $last_selected = end($selected_months);
+            $year = substr($last_selected, 0, 4);
+            $month = substr($last_selected, 5, 2);
+            $months = [];
+            for ($i = 1; $i <= intval($month); $i++) {
+                $months[] = sprintf('%s-%02d', $year, $i);
+            }
         } else {
-            // If no months selected, get current month's orders
-            $current_month = date('Y-m');
-            $data['status_orders'] = $this->order_model->get_orders_by_status_and_months($status, [$current_month]);
+            // If no months selected, get current year's months
+            $current_year = date('Y');
+            $current_month = date('m');
+            $months = [];
+            for ($i = 1; $i <= $current_month; $i++) {
+                $months[] = sprintf('%s-%02d', $current_year, $i);
+            }
         }
         
+        $data['status_orders'] = $this->order_model->get_orders_by_status_and_months($status, $months);
         $data['selected_status'] = $status;
         
         // Load the table view

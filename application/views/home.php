@@ -20,19 +20,26 @@
             <?php if ($role === 'admin'): ?>
             <div class="row" style="margin-bottom: 15px;">
                 <div class="col-md-6">
-                    <label for="months" style="font-weight:600; margin-bottom:4px;">Filter Bulan <small>(bisa lebih dari 1):</small></label>
-                    <select id="months" class="form-control select2" multiple style="width:100%;">
+                    <label for="months" style="font-weight:600; margin-bottom:4px;">Filter Bulan <small>(data akan ditampilkan dari Januari sampai bulan yang dipilih)</small></label>
+                    <select id="months" class="form-control select2" style="width:100%;">
                         <?php
-                        $now = new DateTime();
-                        $existing = [];
-                        for ($i = 0; $i < 12; $i++) {
-                            $month = $now->format('Y-m');
-                            // Prevent duplicate months
-                            if (!in_array($month, $existing)) {
-                              $existing[] = $month;
-                              echo "<option value=\"$month\">".date('F Y', strtotime($month."-01"))."</option>";
-                            }
-                            $now->modify('-1 month');
+                        $months = [
+                            '01' => 'Januari',
+                            '02' => 'Februari',
+                            '03' => 'Maret',
+                            '04' => 'April',
+                            '05' => 'Mei',
+                            '06' => 'Juni',
+                            '07' => 'Juli',
+                            '08' => 'Agustus',
+                            '09' => 'September',
+                            '10' => 'Oktober',
+                            '11' => 'November',
+                            '12' => 'Desember'
+                        ];
+                        foreach ($months as $num => $name) {
+                            $month_value = $current_year . '-' . $num;
+                            echo "<option value=\"$month_value\">" . $name . " " . $current_year . "</option>";
                         }
                         ?>
                     </select>
@@ -202,8 +209,8 @@ $(document).ready(function() {
     // Initialize select2 for better UX in month selection
     $('#months').select2({
         placeholder: 'Pilih bulan...',
-        allowClear: true
-    });
+        allowClear: false
+    }).val('<?= date('Y-m') ?>').trigger('change'); // Set current month as default
 
     // Helper function to handle session expiration
     function handleSessionExpiration(response) {
@@ -225,47 +232,65 @@ $(document).ready(function() {
     }
 
     // Month filter handler: Updates all status tiles counts without page reload
-    // This improves performance by only fetching the counts, not the full data
     $('#btn-filter-months').click(function(){
-        var months = $('#months').val();
-        console.log('Selected months:', months);
-        if (!months || months.length === 0){
-            alert('Pilih minimal satu bulan!');
+        var selectedMonth = $('#months').val();
+        if (!selectedMonth) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Pilih Bulan',
+                text: 'Silakan pilih bulan terlebih dahulu!'
+            });
             return;
         }
+
         $.ajax({
             url: '<?= site_url('home/ajax_status_tile_counts') ?>',
             type: 'POST',
-            data: { months: months },
+            data: { months: [selectedMonth] },
             dataType: 'json',
             success: function(resp) {
                 if (handleSessionExpiration(resp)) return;
                 
-                if(resp && typeof resp === 'object'){
+                if (resp.status === 'success') {
                     // Update all tiles at once to maintain visual consistency
-                    $('#count-total-orders').text(resp.total_orders);
-                    $('#count-pending-orders').text(resp.pending_orders);
-                    $('#count-approved-orders').text(resp.approved_orders);
-                    $('#count-done-orders').text(resp.done_orders);
-                    $('#count-rejected-orders').text(resp.rejected_orders);
-                    $('#count-no-confirmation-orders').text(resp.no_confirmation_orders);
+                    $('#count-total-orders').text(resp.data.total_orders);
+                    $('#count-pending-orders').text(resp.data.pending_orders);
+                    $('#count-approved-orders').text(resp.data.approved_orders);
+                    $('#count-done-orders').text(resp.data.done_orders);
+                    $('#count-rejected-orders').text(resp.data.rejected_orders);
+                    $('#count-no-confirmation-orders').text(resp.data.no_confirmation_orders);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: resp.message
+                    });
                 }
             },
             error: function(xhr) {
                 try {
                     var resp = JSON.parse(xhr.responseText);
                     if (handleSessionExpiration(resp)) return;
-                } catch(e) {}
-                alert('Gagal memuat data');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: resp.message || 'Gagal memuat data'
+                    });
+                } catch(e) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Gagal memuat data'
+                    });
+                }
             }
         });
     });
 
-    // Status tile click handler: Shows filtered orders table
-    // Uses AJAX to avoid full page reloads and maintain filter state
+    // Status tile click handler
     $('.status-tile').click(function() {
         var status = $(this).data('status');
-        var months = $('#months').val() || [];
+        var selectedMonth = $('#months').val();
         
         // Visual feedback for active tile
         $('.status-tile').removeClass('active');
@@ -280,7 +305,7 @@ $(document).ready(function() {
             type: 'POST',
             data: { 
                 status: status,
-                months: months
+                months: selectedMonth ? [selectedMonth] : []
             },
             dataType: 'json',
             success: function(response) {

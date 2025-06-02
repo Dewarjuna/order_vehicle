@@ -23,7 +23,7 @@
             <div class="col-md-12">
                 <div class="alert alert-success" role="alert" style="font-size:18px; margin-top:20px;">
                 <strong>Pesanan kendaraan anda telah berhasil disimpan.</strong><br>
-                Silahkan lihat status pesanan anda <a href="<?php echo base_url('index.php/order/detail'); ?>">disini</a>.
+                Silahkan lihat status pesanan anda <a href="<?php echo base_url('order/detail'); ?>">disini</a>.
                 </div>
             </div>
             </div>		

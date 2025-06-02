@@ -38,11 +38,11 @@
             <!-- Back button at the top -->
             <div style="margin-bottom:25px;">
               <?php if ($user_session['role'] === 'admin'): ?>
-                  <a href="<?= base_url('index.php/order/order_report'); ?>" class="btn btn-primary btn-sm">
+                  <a href="<?= base_url('order/order_report'); ?>" class="btn btn-primary btn-sm">
                       <i class="fa fa-arrow-left"></i> Back
                   </a>
               <?php else: ?>
-                  <a href="<?= base_url('index.php/order/detail'); ?>" class="btn btn-primary btn-sm">
+                  <a href="<?= base_url('order/detail'); ?>" class="btn btn-primary btn-sm">
                       <i class="fa fa-arrow-left"></i> Back
                   </a>
               <?php endif; ?>
