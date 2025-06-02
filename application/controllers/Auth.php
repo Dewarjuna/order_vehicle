@@ -2,8 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Handles login/logout. 
- * Unauthenticated users reach here by default. 
+ * Authentication Controller
+ * 
+ * Handles user authentication separately from other controllers to:
+ * - Keep security concerns isolated
+ * - Allow unauthenticated access to login
+ * - Provide clear separation between auth and business logic
  */
 class Auth extends MY_Controller
 {
@@ -16,8 +20,8 @@ class Auth extends MY_Controller
     }
 
     /**
-     * If logged in already, immediately jump to home.
-     * Otherwise, show the login screen.
+     * Login page and processing
+     * Combined in one method to reduce attack surface and simplify flow
      */
     public function index()
     {
@@ -51,7 +55,8 @@ class Auth extends MY_Controller
     }
 
     /**
-     * Destroy session and redirect.
+     * Logout handled separately to ensure proper session cleanup
+     * and prevent session fixation attacks
      */
     public function logout()
     {

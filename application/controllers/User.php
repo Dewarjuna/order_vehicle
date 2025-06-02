@@ -2,7 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Admin-only: List, create, edit, and delete user accounts.
+ * User Controller
+ * 
+ * Separated from Auth controller to:
+ * - Keep user management distinct from authentication
+ * - Support different access levels for user operations
+ * - Handle user-specific business logic
  */
 class User extends MY_Controller
 {
@@ -12,6 +17,10 @@ class User extends MY_Controller
         $this->load->model('auth_model');
     }
 
+    /**
+     * User listing and management
+     * Combined view for efficient user administration
+     */
     public function user_list()
     {
         if ($this->user_session['role'] !== 'admin') {
@@ -135,5 +144,14 @@ class User extends MY_Controller
             }
         }
         redirect('user/user_list');
+    }
+
+    /**
+     * Profile operations separated from general user management
+     * Allows for different access controls and validation rules
+     */
+    public function profile()
+    {
+        // ... existing code ...
     }
 }

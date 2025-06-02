@@ -2,7 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * CRUD for vehicles, admin only.
+ * Vehicle Controller
+ * 
+ * Separated from Order controller to:
+ * - Allow independent vehicle management
+ * - Simplify fleet maintenance operations
+ * - Keep vehicle-specific logic isolated
  */
 class Vehicle extends MY_Controller
 {

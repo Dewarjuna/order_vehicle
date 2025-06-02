@@ -2,21 +2,53 @@
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Base controller to consolidate session/user retrieval and access control logic.
- * Extend all project controllers from this class rather than CI_Controller directly.
+ * MY_Controller - A Core Extension of CodeIgniter's Base Controller
+ * 
+ * WHY THIS EXISTS:
+ * 1. CodeIgniter allows extending core classes by prefixing them with 'MY_'.
+ *    This is a design pattern known as "Core Extension" in CodeIgniter.
+ * 
+ * 2. Instead of duplicating session checks, user authentication, and timezone setup
+ *    in every controller, we centralize these common requirements here.
+ *    This follows the DRY (Don't Repeat Yourself) principle.
+ * 
+ * 3. By having all controllers extend this class instead of CI_Controller,
+ *    we ensure consistent behavior across the entire application:
+ *    - Unified session management
+ *    - Standardized authentication checks
+ *    - Consistent timezone handling
+ *    - Common data available to all views
+ * 
+ * 4. This pattern makes the application more maintainable because:
+ *    - Changes to core behavior only need to be made in one place
+ *    - New common functionality can be easily added for all controllers
+ *    - Security policies are enforced consistently
  */
 class MY_Controller extends CI_Controller
 {
-    // Holds relevant user information from the session for easy access across all controllers/views
+    /**
+     * Holds user session data in a standardized format.
+     * This prevents inconsistent session access patterns across controllers
+     * and provides a single source of truth for user information.
+     */
     public $user_session = array();
 
     public function __construct()
     {
         parent::__construct();
-        date_default_timezone_set('Asia/Jakarta');
         
+        // Set timezone for consistent datetime handling across the application
+        // This is crucial for a booking system where time accuracy is important
+        date_default_timezone_set('Asia/Jakarta');
 
-        // Gather session data into $user_session for consistent, centralized access.
+        /**
+         * Centralize session data access
+         * 
+         * WHY:
+         * 1. Prevents scattered session access throughout controllers
+         * 2. Makes it easy to modify session structure in one place
+         * 3. Ensures consistent data format for user information
+         */
         $this->user_session = array(
             'user_id'  => $this->session->userdata('user_id'),
             'username' => $this->session->userdata('username'),
@@ -24,16 +56,29 @@ class MY_Controller extends CI_Controller
             'role'     => $this->session->userdata('role')
         );
 
-        // Inject $user_session into all views so layout files and partials can reference user details without extra queries.
+        /**
+         * Make user data available to all views automatically
+         * 
+         * WHY:
+         * 1. Eliminates need to manually pass user data in every controller method
+         * 2. Ensures consistent user data access in all views
+         * 3. Reduces chance of missing user data in views
+         */
         $this->load->vars('user_session', $this->user_session);
 
-        // Identify which controller is currently being accessed
+        // Get current controller for authentication logic
         $controller = $this->router->fetch_class();
 
-        // Enforce login/authentication except for the login controller itself.
-        // This pattern helps avoid duplicating "is logged in" checks in each controller.
+        /**
+         * Centralized Authentication Check
+         * 
+         * WHY:
+         * 1. Security should be enforced at the highest possible level
+         * 2. Prevents accidentally forgetting auth checks in controllers
+         * 3. Makes it easy to modify auth logic for the entire application
+         * 4. Provides consistent redirect behavior for unauthenticated users
+         */
         if (empty($this->user_session['user_id']) && $controller != 'auth') {
-            // Show a user-friendly reason for redirecting.
             $this->session->set_flashdata('session_expired', 'Your session has expired due to inactivity. Please log in again.');
             redirect('auth');
         }

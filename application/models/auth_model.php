@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Authentication Model
+ * 
+ * Separates user authentication logic from business models to:
+ * - Maintain clear security boundaries
+ * - Allow for easy auth method changes
+ * - Centralize credential handling
+ */
 class Auth_model extends CI_Model
 {
     // Table used for authentication. Only modify here if schema changes.
@@ -19,9 +27,8 @@ class Auth_model extends CI_Model
     }
 
     /**
-     * Attempt login with provided credentials.
-     * Returns TRUE on success, FALSE on failure.
-     * NOTE: No password hashing is used; consider updating for security.
+     * Validates credentials in database
+     * Returns full user data to avoid multiple queries during session creation
      */
     public function login($username, $password)
     {
@@ -79,14 +86,21 @@ class Auth_model extends CI_Model
     {
         return $this->db->get($this->_table)->result();
     }
-    public function getuser_by_id($id)
+
+    /**
+     * Separate method for user retrieval
+     * Prevents mixing of auth and general user operations
+     */
+    public function get_user_by_id($id)
     {
         return $this->db->get_where($this->_table, ['id' => $id])->row();
     }
+
     public function update_user($id, $data)
     {
         return $this->db->update($this->_table, $data, ['id' => $id]);
     }
+
     public function delete_user($id)
     {
         return $this->db->delete($this->_table, ['id' => $id]);

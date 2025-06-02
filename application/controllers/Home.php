@@ -1,6 +1,16 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Home Controller
+ * 
+ * This controller manages the vehicle booking dashboard which serves two distinct user types:
+ * - Admins: Who need a comprehensive overview of all bookings with filtering capabilities
+ * - Regular users: Who need a simplified view of just their own bookings
+ * 
+ * The dashboard uses AJAX for real-time updates to maintain responsiveness when filtering,
+ * rather than full page reloads, improving the user experience especially with large datasets.
+ */
 class Home extends MY_Controller {
 
     public function __construct()
@@ -10,6 +20,14 @@ class Home extends MY_Controller {
         $this->load->model('order_model');
     }
 
+    /**
+     * Dashboard entry point that handles both admin and user views
+     * 
+     * We chose to combine both views in one method because:
+     * 1. They share similar data loading patterns
+     * 2. The logic for determining which view to show is simple (role-based)
+     * 3. It makes it easier to maintain consistency between admin/user experiences
+     */
     public function index()
     {   
         date_default_timezone_set('Asia/Jakarta');
@@ -50,6 +68,14 @@ class Home extends MY_Controller {
         $this->load->view('home', $data);
     }
 
+    /**
+     * AJAX endpoint for updating dashboard tile counts
+     * 
+     * This endpoint exists separately from the main table data because:
+     * 1. Tile counts need to update more frequently than the full table
+     * 2. It's more efficient to send just the counts rather than full order data
+     * 3. The tiles and table can be updated independently for better UX
+     */
     public function ajax_status_tile_counts(){
         if (!$this->input->is_ajax_request()) {
             show_error('No direct script access allowed', 403);
@@ -70,6 +96,17 @@ class Home extends MY_Controller {
         echo json_encode($results);
     }
 
+    /**
+     * AJAX endpoint for loading filtered order tables
+     * 
+     * We handle this as a separate endpoint rather than loading with initial page because:
+     * 1. It allows for dynamic filtering without page reloads
+     * 2. Reduces initial page load time by loading table data on-demand
+     * 3. Maintains state of filters when users navigate back to dashboard
+     * 
+     * The table view is loaded as a partial to maintain consistency across all table instances
+     * and make it easier to modify the table structure in one place.
+     */
     public function ajax_get_orders_table() {
         if (!$this->input->is_ajax_request()) {
             show_error('No direct script access allowed', 403);

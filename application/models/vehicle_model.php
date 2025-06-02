@@ -1,14 +1,30 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Vehicle Model
+ * 
+ * Separate from order model to:
+ * - Maintain vehicle fleet independently of bookings
+ * - Handle vehicle-specific status tracking
+ * - Simplify vehicle availability management
+ */
 class Vehicle_model extends CI_Model
 {
     protected $table = 'PK_kendaraan';
 
+    /**
+     * Returns all vehicles with status
+     * Used for both booking selection and fleet management
+     */
     public function get_all()
     {
         return $this->db->get($this->table)->result();
     }
+    /**
+     * Filters available vehicles only
+     * Optimizes vehicle selection during booking process
+     */
     public function get_available()
     {
         return $this->db->get_where($this->table, ['status' => 'available'])->result();

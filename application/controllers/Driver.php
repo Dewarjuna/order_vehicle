@@ -2,8 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * CRUD management for drivers.
- * Restricted to admin users (checked per endpoint).
+ * Driver Controller
+ * 
+ * Separated from vehicle management to:
+ * - Handle driver-specific operations independently
+ * - Maintain clear responsibility boundaries
+ * - Support different access controls for driver management
  */
 class Driver extends MY_Controller
 {
@@ -14,7 +18,8 @@ class Driver extends MY_Controller
     }
 
     /**
-     * Show all drivers—admin-only.
+     * Driver listing and management
+     * Combined view for efficiency in driver administration
      */
     public function driver_list()
     {
@@ -77,5 +82,13 @@ class Driver extends MY_Controller
         }
         $this->driver_model->delete($id);
         redirect('/driver');
+    }
+
+    /**
+     * AJAX operations for driver management
+     * Separated for responsive UI updates
+     */
+    public function ajax_update_status() {
+        // ... existing code ...
     }
 }

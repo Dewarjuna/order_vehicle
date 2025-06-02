@@ -1,10 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Driver Model
+ * 
+ * Separate from vehicle model to:
+ * - Handle driver availability independently
+ * - Support driver-specific status tracking
+ * - Maintain clear separation of driver and vehicle management
+ */
 class Driver_model extends CI_Model
 {
     protected $table = 'PK_driver';
 
+    /**
+     * Returns all drivers with status
+     * Used for both assignment and management purposes
+     */
     public function get_all()
     {
         return $this->db->get($this->table)->result();
@@ -35,7 +47,8 @@ class Driver_model extends CI_Model
     }
 
     /**
-     * Fetch all available drivers.
+     * Filters to available drivers only
+     * Optimizes driver selection during booking process
      */
     public function get_available()
     {

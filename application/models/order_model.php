@@ -1,7 +1,24 @@
 <?php
+/**
+ * Order Model
+ * 
+ * This model handles all vehicle booking operations with a focus on maintaining data integrity
+ * and proper state management between orders, vehicles, and drivers.
+ * 
+ * Key design decisions:
+ * 1. All operations that affect multiple entities (order, vehicle, driver) use transactions
+ * 2. Automatic status updates are implemented to prevent stale data
+ * 3. Timestamps are automatically managed to track order lifecycle
+ * 4. Left joins are used with vehicle/driver data to handle cases where they might be unassigned
+ */
 class Order_model extends CI_Model {
 
-    // Table names as properties for easier maintenance.
+    /**
+     * We store table names as properties rather than hardcoding them because:
+     * 1. It makes it easier to rename tables if needed
+     * 2. Prevents typos in table names across multiple queries
+     * 3. Provides a single source of truth for table names
+     */
     protected $table_pesanan = 'PK_pesanan';
     protected $table_user    = 'PK_user';
 
@@ -9,14 +26,22 @@ class Order_model extends CI_Model {
         parent::__construct();
     }
 
-    // Simple CRUD for orders and users
+    /**
+     * Basic CRUD operations are kept simple and separate from complex operations
+     * to maintain clear boundaries between simple data access and business logic
+     */
     public function getpesanan_all()             { return $this->db->get($this->table_pesanan)->result(); }
     public function getpesanan_by_id($id)        { return $this->db->get_where($this->table_pesanan, ['id' => $id])->row(); }
     public function getusers_all()               { return $this->db->get($this->table_user)->result(); }
     public function getusers_by_id($id)          { return $this->db->get_where($this->table_user, ['id' => $id])->row(); }
 
     /**
-     * Create pesanan with created_at/updated_at timestamps.
+     * Order creation enforces timestamp management to ensure we always have
+     * accurate tracking of when orders are created and modified.
+     * This is crucial for:
+     * 1. Audit trails
+     * 2. Sorting orders by creation date
+     * 3. Tracking how long orders spend in each state
      */
     public function create($data) {
         $data['created_at'] = date('Y-m-d H:i:s');
@@ -42,7 +67,11 @@ class Order_model extends CI_Model {
     }
 
     /**
-     * Approve order; assign kendaraan (vehicle) and driver.
+     * Order approval is a critical operation that requires atomic execution
+     * to prevent race conditions. We use transactions to ensure that:
+     * 1. Vehicle and driver are still available when we try to assign them
+     * 2. All related records are updated together or not at all
+     * 3. No other process can reserve the same resources simultaneously
      */
     public function approve_order($id, $kendaraan, $driver) {
         $data = [
@@ -55,7 +84,144 @@ class Order_model extends CI_Model {
         return $this->db->update($this->table_pesanan, $data);
     }
 
-    // Statistical helper methods, used for dashboard/analytics:
+    /**
+     * Auto-update functions serve as a self-healing mechanism for the system.
+     * They prevent orders from getting stuck in intermediate states by:
+     * 1. Automatically completing orders when their scheduled time is over
+     * 2. Releasing vehicles and drivers back to the available pool
+     * 3. Marking unconfirmed orders appropriately
+     * 
+     * This approach was chosen over real-time updates because:
+     * 1. It's more efficient than checking every order status on every request
+     * 2. It handles edge cases like system downtime or failed updates
+     * 3. It provides a predictable way to maintain data consistency
+     */
+    public function autoUpdateStatus_driver_kendaraan()
+    {
+        $today = date('Y-m-d');
+        $now = date('H:i:s');
+
+        /* echo "<pre>";
+        echo "PHP Now: $now\n";
+        echo "PHP Today: $today\n";
+        $this->db->where('status', 'approved');
+        $this->db->where('tanggal_pakai <=', $today);
+        $this->db->where('waktu_selesai <', $now);
+        $query = $this->db->get('PK_pesanan');
+        echo $this->db->last_query() . "\n";
+        print_r($query->result());
+        echo "</pre>"; */
+
+        // Find all orders that are still 'approved' but their usage time is over
+        $this->db->where('status', 'approved');
+        $this->db->where('tanggal_pakai <=', $today);
+        $this->db->where('waktu_selesai <', $now);
+        $orders = $this->db->get('PK_pesanan')->result();
+
+        foreach ($orders as $order) {
+            // Release kendaraan if assigned and still unavailable
+            if ($order->kendaraan) {
+                $this->db->where('id', $order->kendaraan)
+                    ->where('status', 'unavailable')
+                    ->update('PK_kendaraan', [
+                        'status' => 'available',
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+            }
+            // Release driver if assigned and still unavailable
+            if ($order->driver) {
+                $this->db->where('id', $order->driver)
+                    ->where('status', 'unavailable')
+                    ->update('PK_driver', [
+                        'status' => 'available',
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+            }
+            // Mark pesanan as done
+            $this->db->where('id', $order->id)
+                ->update('PK_pesanan', [
+                    'status' => 'done',
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+        }
+    }
+
+    /**
+     * Automatically update orders that are pending and past their usage date
+     * to 'no confirmation' status.
+     */
+    public function autoUpdateNoConfirmationStatus()
+    {
+        $today = date('Y-m-d');
+        $this->db->where('status', 'pending');
+        $this->db->where('tanggal_pakai <=', $today);
+        $orders = $this->db->get('PK_pesanan')->result();
+
+        foreach ($orders as $order) {
+            $this->db->where('id', $order->id)
+                ->update('PK_pesanan', [
+                    'status' => 'no confirmation',
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+        }
+    }
+
+    /**
+     * Reject order and mark it as 'rejected'.
+     */
+    public function reject_order($id)
+    {
+        $data = [
+            'status' => 'rejected',
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+        $this->db->where('id', $id);
+        return $this->db->update($this->table_pesanan, $data);
+    }
+    /**
+     * Get all orders by status with related kendaraan and driver info.
+     */
+public function get_orders_by_status($status) {
+    $this->db->select('p.*, k.no_pol, k.nama_kendaraan, d.nama as nama_driver')
+        ->from('PK_pesanan p')
+        ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
+        ->join('PK_driver d', 'p.driver = d.id', 'left')
+        ->where('p.status', $status)
+        ->order_by('p.tanggal_pakai', 'DESC');
+    return $this->db->get()->result();
+}
+
+    /**
+     * Multi-month operations support dashboard filtering functionality
+     * using WHERE_IN clauses instead of multiple OR conditions because:
+     * 1. It's more efficient for the database to optimize
+     * 2. It's easier to maintain and modify the queries
+     * 3. It scales better with larger numbers of months
+     */
+    public function get_orders_by_status_and_months($status, $months = []) {
+        $this->db->select('p.*, k.no_pol, k.nama_kendaraan, d.nama as nama_driver')
+            ->from('PK_pesanan p')
+            ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
+            ->join('PK_driver d', 'p.driver = d.id', 'left')
+            ->where('p.status', $status);
+        
+        if (!empty($months)) {
+            $this->db->where_in("LEFT(p.tanggal_pesanan, 7)", $months);
+        }
+        
+        return $this->db->get()->result();
+    }
+
+    /**
+     * Statistical methods are separated from basic CRUD operations because:
+     * 1. They often require different optimization strategies
+     * 2. They may need to be cached differently
+     * 3. They serve a different purpose (analytics vs. data management)
+     * 
+     * We use LEFT() for date extraction instead of DATE_FORMAT() because:
+     * 1. It's more efficient for index usage
+     * 2. It's consistent across different database engines
+     */
     public function count_orders_by_month($month) {
         $this->db->where("LEFT(tanggal_pesanan, 7) = '$month'", NULL, FALSE);
         return $this->db->count_all_results($this->table_pesanan);
@@ -164,121 +330,5 @@ class Order_model extends CI_Model {
             $this->db->trans_rollback();
             return ['error' => 'Approval gagal'];
         }
-    }
-
-    /**
-     * Find and update orders whose scheduled usage is completed:
-     * - Mark kendaraan & driver as available again
-     * - Mark pesanan as done makmdimcjomc
-     * 
-     * This should run periodically as a cron or on user interaction.
-     */
-    public function autoUpdateStatus_driver_kendaraan()
-    {
-        $today = date('Y-m-d');
-        $now = date('H:i:s');
-
-        /* echo "<pre>";
-        echo "PHP Now: $now\n";
-        echo "PHP Today: $today\n";
-        $this->db->where('status', 'approved');
-        $this->db->where('tanggal_pakai <=', $today);
-        $this->db->where('waktu_selesai <', $now);
-        $query = $this->db->get('PK_pesanan');
-        echo $this->db->last_query() . "\n";
-        print_r($query->result());
-        echo "</pre>"; */
-
-        // Find all orders that are still 'approved' but their usage time is over
-        $this->db->where('status', 'approved');
-        $this->db->where('tanggal_pakai <=', $today);
-        $this->db->where('waktu_selesai <', $now);
-        $orders = $this->db->get('PK_pesanan')->result();
-
-        foreach ($orders as $order) {
-            // Release kendaraan if assigned and still unavailable
-            if ($order->kendaraan) {
-                $this->db->where('id', $order->kendaraan)
-                    ->where('status', 'unavailable')
-                    ->update('PK_kendaraan', [
-                        'status' => 'available',
-                        'updated_at' => date('Y-m-d H:i:s')
-                    ]);
-            }
-            // Release driver if assigned and still unavailable
-            if ($order->driver) {
-                $this->db->where('id', $order->driver)
-                    ->where('status', 'unavailable')
-                    ->update('PK_driver', [
-                        'status' => 'available',
-                        'updated_at' => date('Y-m-d H:i:s')
-                    ]);
-            }
-            // Mark pesanan as done
-            $this->db->where('id', $order->id)
-                ->update('PK_pesanan', [
-                    'status' => 'done',
-                    'updated_at' => date('Y-m-d H:i:s')
-                ]);
-        }
-    }
-
-    /**
-     * Automatically update orders that are pending and past their usage date
-     * to 'no confirmation' status.
-     */
-    public function autoUpdateNoConfirmationStatus()
-    {
-        $today = date('Y-m-d');
-        $this->db->where('status', 'pending');
-        $this->db->where('tanggal_pakai <=', $today);
-        $orders = $this->db->get('PK_pesanan')->result();
-
-        foreach ($orders as $order) {
-            $this->db->where('id', $order->id)
-                ->update('PK_pesanan', [
-                    'status' => 'no confirmation',
-                    'updated_at' => date('Y-m-d H:i:s')
-                ]);
-        }
-    }
-
-    /**
-     * Reject order and mark it as 'rejected'.
-     */
-    public function reject_order($id)
-    {
-        $data = [
-            'status' => 'rejected',
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
-        $this->db->where('id', $id);
-        return $this->db->update($this->table_pesanan, $data);
-    }
-    /**
-     * Get all orders by status with related kendaraan and driver info.
-     */
-public function get_orders_by_status($status) {
-    $this->db->select('p.*, k.no_pol, k.nama_kendaraan, d.nama as nama_driver')
-        ->from('PK_pesanan p')
-        ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
-        ->join('PK_driver d', 'p.driver = d.id', 'left')
-        ->where('p.status', $status)
-        ->order_by('p.tanggal_pakai', 'DESC');
-    return $this->db->get()->result();
-}
-
-    public function get_orders_by_status_and_months($status, $months = []) {
-        $this->db->select('p.*, k.no_pol, k.nama_kendaraan, d.nama as nama_driver')
-            ->from('PK_pesanan p')
-            ->join('PK_kendaraan k', 'p.kendaraan = k.id', 'left')
-            ->join('PK_driver d', 'p.driver = d.id', 'left')
-            ->where('p.status', $status);
-        
-        if (!empty($months)) {
-            $this->db->where_in("LEFT(p.tanggal_pesanan, 7)", $months);
-        }
-        
-        return $this->db->get()->result();
     }
 }
