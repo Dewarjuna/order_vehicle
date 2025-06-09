@@ -20,7 +20,7 @@
             <?php if ($role === 'admin'): ?>
             <div class="row" style="margin-bottom: 15px;">
                 <div class="col-md-3">
-                    <label for="year" style="font-weight:600; margin-bottom:4px;">Pilih Tahun</label>
+                    <label for="year" style="font-weight:600; margin-bottom:4px;">Pilih Tahun <small>(data yang ditampilkan hanya dari tahun yang dipilih)</small></label>
                     <select id="year" class="form-control select2" style="width:100%;">
                         <?php
                         // Show last 5 years up to next year
@@ -219,7 +219,7 @@
 <?php if ($role === 'admin'): ?>
 <script>
 $(document).ready(function() {
-    // Initialize select2 for better UX in selections
+    // Initialize select2
     $('#year, #months').select2({
         allowClear: false
     });
